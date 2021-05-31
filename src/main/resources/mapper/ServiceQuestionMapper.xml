@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceQuestionMapper">
+    <!--/**-->
+    <!--* 小程序>>>>应用>>>趣味答题-->
+    <!--* 对应表：service_question-->
+    <!--*/-->
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceQuestion">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="question" jdbcType="VARCHAR" property="question" />
+    <result column="question_type" jdbcType="VARCHAR" property="questionType" />
+    <result column="answer_description" jdbcType="VARCHAR" property="answerDescription" />
+    <result column="correct_answer" jdbcType="VARCHAR" property="correctAnswer" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+  </resultMap>
+
+  <resultMap id="NoAnswerResultMap" type="com.cqut.building.dto.GetServiceQuestionDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="question" jdbcType="VARCHAR" property="question" />
+    <result column="question_type" jdbcType="VARCHAR" property="questionType" />
+    <result column="answer_description" jdbcType="VARCHAR" property="answerDescription" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="correct_answer" jdbcType="VARCHAR" property="correctAnswer" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, question, question_type, answer_description, correct_answer, picture
+  </sql>
+  <select id="selectExaminationQuestionByIdNoAnswer" parameterType="java.lang.String" resultMap="NoAnswerResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from service_question where id in(
+    select question_id from service_examination_question where examination_id=#{examinationId,jdbcType=VARCHAR}
+    )
+  </select>
+
+  <select id="selectExaminationQuestionById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from service_question where id in(
+    select question_id from service_examination_question where examination_id=#{examinationId,jdbcType=VARCHAR}
+    )
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_question
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceQuestion">
+    insert into service_question (id, title, question, 
+      question_type, answer_description, correct_answer, 
+      picture)
+    values (#{id,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}, 
+      #{questionType,jdbcType=VARCHAR}, #{answerDescription,jdbcType=VARCHAR}, #{correctAnswer,jdbcType=VARCHAR}, 
+      #{picture,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceQuestion">
+    insert into service_question
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="question != null">
+        question,
+      </if>
+      <if test="questionType != null">
+        question_type,
+      </if>
+      <if test="answerDescription != null">
+        answer_description,
+      </if>
+      <if test="correctAnswer != null">
+        correct_answer,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="question != null">
+        #{question,jdbcType=VARCHAR},
+      </if>
+      <if test="questionType != null">
+        #{questionType,jdbcType=VARCHAR},
+      </if>
+      <if test="answerDescription != null">
+        #{answerDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="correctAnswer != null">
+        #{correctAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceQuestion">
+    update service_question
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="question != null">
+        question = #{question,jdbcType=VARCHAR},
+      </if>
+      <if test="questionType != null">
+        question_type = #{questionType,jdbcType=VARCHAR},
+      </if>
+      <if test="answerDescription != null">
+        answer_description = #{answerDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="correctAnswer != null">
+        correct_answer = #{correctAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceQuestion">
+    update service_question
+    set title = #{title,jdbcType=VARCHAR},
+      question = #{question,jdbcType=VARCHAR},
+      question_type = #{questionType,jdbcType=VARCHAR},
+      answer_description = #{answerDescription,jdbcType=VARCHAR},
+      correct_answer = #{correctAnswer,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

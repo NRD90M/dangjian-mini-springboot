@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--/**-->
+<!--* 小程序>>>>应用>>>趣味答题-->
+<!--* 对应表：service_question_category-->
+<!--*/-->
+<mapper namespace="com.cqut.building.dao.ServiceQuestionCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceQuestionCategory">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="founder_id" jdbcType="VARCHAR" property="founderId" />
+    <result column="creation_time" jdbcType="TIMESTAMP" property="creationTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, category_name, remark, founder_id, creation_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from service_question_category
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+    <select id="selectAllCategoryName" resultMap="BaseResultMap">
+        select id,category_name
+        from service_question_category
+    </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_question_category
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceQuestionCategory">
+    insert into service_question_category (id, category_name, remark, 
+      founder_id, creation_time)
+    values (#{id,jdbcType=VARCHAR}, #{categoryName,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{founderId,jdbcType=VARCHAR}, #{creationTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceQuestionCategory">
+    insert into service_question_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="categoryName != null">
+        category_name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="founderId != null">
+        founder_id,
+      </if>
+      <if test="creationTime != null">
+        creation_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryName != null">
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="founderId != null">
+        #{founderId,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null">
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceQuestionCategory">
+    update service_question_category
+    <set>
+      <if test="categoryName != null">
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="founderId != null">
+        founder_id = #{founderId,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null">
+        creation_time = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceQuestionCategory">
+    update service_question_category
+    set category_name = #{categoryName,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      founder_id = #{founderId,jdbcType=VARCHAR},
+      creation_time = #{creationTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceExaminationManagementMapper">
+    <!--/**-->
+    <!--* 小程序>>>>应用>>>趣味答题-->
+    <!--* 对应表：service_examination_management-->
+    <!--*/-->
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceExaminationManagement">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="begin_time" jdbcType="VARCHAR" property="beginTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="release_time" jdbcType="VARCHAR" property="releaseTime" />
+    <result column="question_category_id" jdbcType="VARCHAR" property="questionCategoryId" />
+    <result column="founder_id" jdbcType="VARCHAR" property="founderId" />
+    <result column="founder_organization_id" jdbcType="VARCHAR" property="founderOrganizationId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapByNameRight" type="com.cqut.building.dto.GetServiceExaminationManagementDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="begin_time" jdbcType="VARCHAR" property="beginTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="release_time" jdbcType="VARCHAR" property="releaseTime" />
+    <result column="question_category_id" jdbcType="VARCHAR" property="questionCategoryId" />
+    <result column="question_category_name" jdbcType="VARCHAR" property="questionCategoryName" />
+    <result column="founder_id" jdbcType="VARCHAR" property="founderId" />
+    <result column="founder_name" jdbcType="VARCHAR" property="founderName" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="question_total_number" jdbcType="INTEGER" property="questionTotalNumber" />
+    <result column="correct_question_number" jdbcType="INTEGER" property="correctQuestionNumber" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapById" type="com.cqut.building.dto.GetExaminationManagementByIdDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="answerRecord_id" jdbcType="VARCHAR" property="answerRecordId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="begin_time" jdbcType="VARCHAR" property="beginTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="release_time" jdbcType="VARCHAR" property="releaseTime" />
+    <result column="question_category_id" jdbcType="VARCHAR" property="questionCategoryId" />
+    <result column="question_category_name" jdbcType="VARCHAR" property="questionCategoryName" />
+    <result column="founder_id" jdbcType="VARCHAR" property="founderId" />
+    <result column="founder_name" jdbcType="VARCHAR" property="founderName" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="question_total_number" jdbcType="INTEGER" property="questionTotalNumber" />
+    <result column="correct_question_number" jdbcType="INTEGER" property="correctQuestionNumber" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    service_examination_management.id, title,date_format(begin_time,'%Y年%m月%d日') as begin_time ,
+    date_format(end_time,'%Y年%m月%d日') as end_time,date_format(release_time,'%Y年%m月%d日') as release_time,
+    question_category_id,service_question_category.category_name question_category_name,
+    service_examination_management.founder_id,sys_party_member_information.name founder_name,state
+  </sql>
+
+  <sql id="selectById_Column_List">
+     service_examination_management.id, title,date_format(begin_time,'%Y年%m月%d日') as begin_time ,
+    date_format(end_time,'%Y年%m月%d日') as end_time,date_format(release_time,'%Y年%m月%d日') as release_time,
+    service_examination_management.founder_id,sys_party_member_information.name founder_name,state,
+    correct_question_number,question_total_number,service_answer_record.id as answerRecord_id
+  </sql>
+
+  <select id="selectExaminationByCategory" parameterType="java.lang.String" resultMap="BaseResultMapByNameRight">
+    select 
+    <include refid="Base_Column_List" />,organization_name,correct_question_number,question_total_number
+    from sys_organizational_structure,sys_party_member_information,service_question_category,service_examination_management
+    left join service_answer_record
+    on (service_answer_record.user_id=#{userId,jdbcType=VARCHAR}
+    and service_answer_record.examination_id=service_examination_management.id)
+    where founder_organization_id=sys_organizational_structure.organization_id
+    and service_examination_management.founder_id=sys_party_member_information.id
+    and question_category_id=service_question_category.id
+    and question_category_id = #{questionCategoryId,jdbcType=VARCHAR}
+    and service_examination_management.state!="1"
+    order by IF(ISNULL(correct_question_number),0,1),begin_time asc
+  </select>
+
+  <select id="selectExaminationAll" parameterType="java.lang.String" resultMap="BaseResultMapByNameRight">
+    select
+    <include refid="Base_Column_List" />,organization_name,correct_question_number,question_total_number
+    from sys_organizational_structure,sys_party_member_information,service_question_category,service_examination_management
+    left join service_answer_record
+    on (service_answer_record.user_id=#{userId,jdbcType=VARCHAR}
+    and service_answer_record.examination_id=service_examination_management.id)
+    where founder_organization_id=sys_organizational_structure.organization_id
+    and service_examination_management.founder_id=sys_party_member_information.id
+    and question_category_id=service_question_category.id
+    and service_examination_management.state!="1"
+    order by IF(ISNULL(correct_question_number),0,1),begin_time asc
+  </select>
+
+  <select id="selectExaminationById" parameterType="java.lang.String" resultMap="BaseResultMapById">
+    select
+    <include refid="selectById_Column_List" />
+    from sys_party_member_information,service_examination_management
+    left join service_answer_record
+    on (service_answer_record.user_id=#{userId,jdbcType=VARCHAR}
+    and service_answer_record.examination_id=service_examination_management.id)
+    where service_examination_management.founder_id=sys_party_member_information.id
+    and service_examination_management.id=#{id,jdbcType=VARCHAR}
+    order by IF(ISNULL(correct_question_number),0,1),begin_time asc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_examination_management
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceExaminationManagement">
+    insert into service_examination_management (id, title, begin_time, 
+      end_time, release_time, question_category_id,founder_id,state
+      )
+    values (#{id,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{beginTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{releaseTime,jdbcType=TIMESTAMP}, #{questionCategoryId,jdbcType=VARCHAR},
+      #{founderId,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceExaminationManagement">
+    insert into service_examination_management
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="releaseTime != null">
+        release_time,
+      </if>
+      <if test="questionCategoryId != null">
+        question_category_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="beginTime != null">
+        #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="releaseTime != null">
+        #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="questionCategoryId != null">
+        #{questionCategoryId,jdbcType=VARCHAR},
+      </if>
+      <if test="founderId != null">
+        founder_id= #{founderId,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state= #{state,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceExaminationManagement">
+    update service_examination_management
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="beginTime != null">
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="releaseTime != null">
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="questionCategoryId != null">
+        question_category_id = #{questionCategoryId,jdbcType=VARCHAR},
+      </if>
+      <if test="founderId != null">
+        founder_id= #{founderId,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state= #{state,jdbcType=INTEGER}
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceExaminationManagement">
+    update service_examination_management
+    set title = #{title,jdbcType=VARCHAR},
+      begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      question_category_id = #{questionCategoryId,jdbcType=VARCHAR},
+      founder_id= #{founderId,jdbcType=VARCHAR},
+      state= #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

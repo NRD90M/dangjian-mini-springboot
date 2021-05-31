@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.SysAnnouncementMapper">
+  <!--/**-->
+  <!--* 小程序>>>消息通知>>>>系统公告-->
+  <!--* 对应表：sys_announcement-->
+  <!--*/-->
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.SysAnnouncement">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="published_time" jdbcType="TIMESTAMP" property="publishedTime" />
+    <result column="notification_scope" jdbcType="VARCHAR" property="notificationScope" />
+    <result column="party_id" jdbcType="VARCHAR" property="partyId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cqut.building.entity.SysAnnouncement">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sys_announcement.id,date_format(published_time,'%Y年%m月%d日') as published_time, notification_scope, party_id
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_announcement,sys_party_member_information
+    where sys_announcement.id = #{id,jdbcType=VARCHAR}
+    and sys_announcement.party_id=sys_party_member_information.id
+  </select>
+
+  <select id="selectAllScope" parameterType="java.lang.String" resultType="java.lang.String">
+    select
+    notification_scope
+    from sys_announcement
+  </select>
+
+  <select id="selectAnnouncementByUser" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_announcement
+    where notification_scope in (${notificationScopes})
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_announcement
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.SysAnnouncement">
+    insert into sys_announcement (id, published_time, notification_scope, 
+      party_id, content)
+    values (#{id,jdbcType=VARCHAR}, #{publishedTime,jdbcType=TIMESTAMP}, #{notificationScope,jdbcType=VARCHAR}, 
+      #{partyId,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.SysAnnouncement">
+    insert into sys_announcement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="publishedTime != null">
+        published_time,
+      </if>
+      <if test="notificationScope != null">
+        notification_scope,
+      </if>
+      <if test="partyId != null">
+        party_id,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="publishedTime != null">
+        #{publishedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notificationScope != null">
+        #{notificationScope,jdbcType=VARCHAR},
+      </if>
+      <if test="partyId != null">
+        #{partyId,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.SysAnnouncement">
+    update sys_announcement
+    <set>
+      <if test="publishedTime != null">
+        published_time = #{publishedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notificationScope != null">
+        notification_scope = #{notificationScope,jdbcType=VARCHAR},
+      </if>
+      <if test="partyId != null">
+        party_id = #{partyId,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cqut.building.entity.SysAnnouncement">
+    update sys_announcement
+    set published_time = #{publishedTime,jdbcType=TIMESTAMP},
+      notification_scope = #{notificationScope,jdbcType=VARCHAR},
+      party_id = #{partyId,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.SysAnnouncement">
+    update sys_announcement
+    set published_time = #{publishedTime,jdbcType=TIMESTAMP},
+      notification_scope = #{notificationScope,jdbcType=VARCHAR},
+      party_id = #{partyId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

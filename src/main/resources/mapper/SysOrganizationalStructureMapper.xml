@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.SysOrganizationalStructureMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.SysOrganizationalStructure">
+    <id column="organization_id" jdbcType="VARCHAR" property="organizationId" />
+    <result column="higher_organization_id" jdbcType="VARCHAR" property="higherOrganizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="rank" jdbcType="INTEGER" property="rank" />
+    <result column="create_member_id" jdbcType="VARCHAR" property="createMemberId" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    organization_id, higher_organization_id, remark, rank, create_member_id, organization_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_organizational_structure
+    where organization_id = #{organizationId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAllSubordinateOrganization" parameterType="java.lang.String" resultType="java.lang.String">
+    select organization_id from sys_organizational_structure
+    where
+	FIND_IN_SET(
+		organization_id,
+		getChildrenOrg (#{organizationId,jdbcType=VARCHAR})
+	)
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_organizational_structure
+    where organization_id = #{organizationId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.SysOrganizationalStructure">
+    insert into sys_organizational_structure (organization_id, higher_organization_id, 
+      remark, rank, create_member_id, 
+      organization_name)
+    values (#{organizationId,jdbcType=VARCHAR}, #{higherOrganizationId,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{createMemberId,jdbcType=VARCHAR},
+      #{organizationName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.SysOrganizationalStructure">
+    insert into sys_organizational_structure
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="organizationId != null">
+        organization_id,
+      </if>
+      <if test="higherOrganizationId != null">
+        higher_organization_id,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="rank != null">
+        rank,
+      </if>
+      <if test="createMemberId != null">
+        create_member_id,
+      </if>
+      <if test="organizationName != null">
+        organization_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="organizationId != null">
+        #{organizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="higherOrganizationId != null">
+        #{higherOrganizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="rank != null">
+        #{rank,jdbcType=INTEGER},
+      </if>
+      <if test="createMemberId != null">
+        #{createMemberId,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationName != null">
+        #{organizationName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.SysOrganizationalStructure">
+    update sys_organizational_structure
+    <set>
+      <if test="higherOrganizationId != null">
+        higher_organization_id = #{higherOrganizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="rank != null">
+        rank = #{rank,jdbcType=INTEGER},
+      </if>
+      <if test="createMemberId != null">
+        create_member_id = #{createMemberId,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationName != null">
+        organization_name = #{organizationName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where organization_id = #{organizationId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.SysOrganizationalStructure">
+    update sys_organizational_structure
+    set higher_organization_id = #{higherOrganizationId,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      rank = #{rank,jdbcType=INTEGER},
+      create_member_id = #{createMemberId,jdbcType=VARCHAR},
+      organization_name = #{organizationName,jdbcType=VARCHAR}
+    where organization_id = #{organizationId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="getInfoByRank" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select * from sys_organizational_structure where rank = #{rank,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from sys_organizational_structure
+  </select>
+  
+  <select id="selectAllOrganization" resultType="com.cqut.building.dto.OrganizationStructureDto">
+        select organization_id as organizationId,rank,organization_name as organizationName
+        from sys_organizational_structure
+  </select>
+  <select id="getOrganizationMember" parameterType="java.lang.String" resultType="com.cqut.building.dto.OrganizationMember">
+      select sp.`name` as post,swu.`name` as name
+      from sys_party_organization_post as spop,sys_wx_user as swu ,sys_post as sp
+      where sp.id=spop.post_id and spop.party_id=swu.party_id and spop.organization_id=#{organizationId,jdbcType=VARCHAR}
+  </select>
+</mapper>

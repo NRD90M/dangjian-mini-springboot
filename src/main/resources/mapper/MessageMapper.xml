@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.Message">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="message_title" jdbcType="VARCHAR" property="messageTitle" />
+    <result column="message_content" jdbcType="VARCHAR" property="messageContent" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="meeting_id" jdbcType="VARCHAR" property="meetingId" />
+    <result column="message_publish_time" jdbcType="TIMESTAMP" property="messagePublishTime" />
+    <result column="party_id" jdbcType="VARCHAR" property="partyId" />
+  </resultMap>
+  <resultMap id="MessagePersonMap" type="com.cqut.building.dto.selectMessageDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="message_title" jdbcType="VARCHAR" property="messageTitle" />
+    <result column="message_content" jdbcType="VARCHAR" property="messageContent" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="meeting_id" jdbcType="VARCHAR" property="meetingId" />
+    <result column="message_publish_time" jdbcType="TIMESTAMP" property="messagePublishTime" />
+    <result column="party_id" jdbcType="VARCHAR" property="partyId" />
+    <result column="message_receive_id" jdbcType="VARCHAR" property="messageReceiveId" />
+    <result column="messagePersonId" jdbcType="VARCHAR" property="messagePersonId" />
+    <result column="is_read" jdbcType="VARCHAR" property="isRead" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    message.id, message_title, message_content, message_type, meeting_id, date_format(message_publish_time,'%Y年%m月%d日') as message_publish_time,
+    message.party_id
+  </sql>
+  <sql id="Message_Person_List">
+    message_person.id as messagePersonId,is_read, message_receive_id
+  </sql>
+  <select id="selectMessage" parameterType="java.lang.String" resultMap="MessagePersonMap">
+    select 
+    <include refid="Base_Column_List" />,<include refid="Message_Person_List" />
+    from service_leave_words
+    where wx_user_id=#{messageReceiveId,jdbcType=VARCHAR} and user_id!=""
+  </select>
+
+  <insert id="insertMessage" parameterType="com.cqut.building.entity.Message">
+    insert into message (id, message_title, message_content, 
+      message_type, meeting_id, message_publish_time, 
+      party_id)
+    values (#{id,jdbcType=VARCHAR}, #{messageTitle,jdbcType=VARCHAR}, #{messageContent,jdbcType=VARCHAR}, 
+      #{messageType,jdbcType=VARCHAR}, #{meetingId,jdbcType=VARCHAR}, #{messagePublishTime,jdbcType=TIMESTAMP}, 
+      #{partyId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.Message">
+    insert into message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="messageTitle != null">
+        message_title,
+      </if>
+      <if test="messageContent != null">
+        message_content,
+      </if>
+      <if test="messageType != null">
+        message_type,
+      </if>
+      <if test="meetingId != null">
+        meeting_id,
+      </if>
+      <if test="messagePublishTime != null">
+        message_publish_time,
+      </if>
+      <if test="partyId != null">
+        party_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="messageTitle != null">
+        #{messageTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null">
+        #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="messageType != null">
+        #{messageType,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingId != null">
+        #{meetingId,jdbcType=VARCHAR},
+      </if>
+      <if test="messagePublishTime != null">
+        #{messagePublishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="partyId != null">
+        #{partyId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.Message">
+    update message
+    <set>
+      <if test="messageTitle != null">
+        message_title = #{messageTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null">
+        message_content = #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="messageType != null">
+        message_type = #{messageType,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingId != null">
+        meeting_id = #{meetingId,jdbcType=VARCHAR},
+      </if>
+      <if test="messagePublishTime != null">
+        message_publish_time = #{messagePublishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="partyId != null">
+        party_id = #{partyId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.Message">
+    update message
+    set message_title = #{messageTitle,jdbcType=VARCHAR},
+      message_content = #{messageContent,jdbcType=VARCHAR},
+      message_type = #{messageType,jdbcType=VARCHAR},
+      meeting_id = #{meetingId,jdbcType=VARCHAR},
+      message_publish_time = #{messagePublishTime,jdbcType=TIMESTAMP},
+      party_id = #{partyId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

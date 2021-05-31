@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceThemeDayMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceThemeDay">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="editor_id" jdbcType="VARCHAR" property="editorId" />
+    <result column="organization_id" jdbcType="VARCHAR" property="organizationId" />
+    <result column="party_members_number" jdbcType="VARCHAR" property="partyMembersNumber" />
+    <result column="branch_secretary_id" jdbcType="VARCHAR" property="branchSecretaryId" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="learning_time" jdbcType="TIMESTAMP" property="learningTime" />
+    <result column="learning_place" jdbcType="VARCHAR" property="learningPlace" />
+    <result column="learning_content" jdbcType="VARCHAR" property="learningContent" />
+    <result column="learning_way" jdbcType="VARCHAR" property="learningWay" />
+    <result column="month" jdbcType="VARCHAR" property="month" />
+    <result column="participants_id" jdbcType="VARCHAR" property="participantsId" />
+    <result column="overall_effect" jdbcType="VARCHAR" property="overallEffect" />
+    <result column="views_number" jdbcType="VARCHAR" property="viewsNumber" />
+    <result column="likes_number" jdbcType="VARCHAR" property="likesNumber" />
+    <result column="top" jdbcType="VARCHAR" property="top" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapByName" type="com.cqut.building.dto.GetServiceThemeDayDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="editor_id" jdbcType="VARCHAR" property="editorId" />
+    <result column="editor_name" jdbcType="VARCHAR" property="editorName" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="organization_id" jdbcType="VARCHAR" property="organizationId" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="party_members_number" jdbcType="VARCHAR" property="partyMembersNumber" />
+    <result column="branch_secretary_id" jdbcType="VARCHAR" property="branchSecretaryId" />
+    <result column="branch_secretary_name" jdbcType="VARCHAR" property="branchSecretaryName" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="learning_time" jdbcType="TIMESTAMP" property="learningTime" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="learning_place" jdbcType="VARCHAR" property="learningPlace" />
+    <result column="learning_content" jdbcType="VARCHAR" property="learningContent" />
+    <result column="learning_way" jdbcType="VARCHAR" property="learningWay" />
+    <result column="month" jdbcType="VARCHAR" property="month" />
+    <result column="participants_id" jdbcType="VARCHAR" property="participantsId" />
+    <result column="participants_name" jdbcType="VARCHAR" property="participantsName" />
+    <result column="overall_effect" jdbcType="VARCHAR" property="overallEffect" />
+    <result column="views_number" jdbcType="VARCHAR" property="viewsNumber" />
+    <result column="likes_number" jdbcType="VARCHAR" property="likesNumber" />
+    <result column="top" jdbcType="VARCHAR" property="top" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,title,organization_id,editor_id,status,party_members_number, branch_secretary_id, phone, learning_time,release_time
+    learning_place, learning_content, learning_way, month, participants_id, overall_effect, top,likes_number,views_number
+  </sql>
+
+  <sql id="name_Column_List">
+    service_theme_day.id,service_theme_day.title,editor_id,y.name editor_name,status,sys_organizational_structure.organization_id,sys_organizational_structure.organization_name organization_name,party_members_number,
+    service_theme_day.branch_secretary_id,x.name branch_secretary_name,phone,date_format(learning_time,'%Y年%m月%d日') as learning_time,
+    date_format(release_time,'%Y年%m月%d日') as release_time,learning_place,learning_content,learning_way,month,overall_effect,top,likes_number,views_number,participants_id
+  </sql>
+
+  <select id="selectAllThemeDay" parameterType="com.cqut.building.dto.GetServiceThemeDayAllDto"  resultMap="BaseResultMapByName">
+    select
+    <include refid="name_Column_List" />,group_concat(sys_party_member_information.name order by sys_party_member_information.id) as participants_name
+    from  (sys_party_member_information x,sys_party_member_information y,service_theme_day,sys_organizational_structure)
+    left join sys_party_member_information on find_in_set(sys_party_member_information.id,service_theme_day.participants_id)
+    where
+    status='2'
+    and sys_organizational_structure.organization_id=service_theme_day.organization_id
+    and x.id=service_theme_day.branch_secretary_id and y.id=service_theme_day.editor_id
+    <if test="rank!=1">
+      and( service_theme_day.organization_id =#{higherOrganizationId,jdbcType=VARCHAR}
+      or service_theme_day.organization_id =#{organizationId,jdbcType=VARCHAR}
+      <if test="rank!=2">
+        or service_theme_day.organization_id =#{firstLevelOrganizationId,jdbcType=VARCHAR}
+      </if>
+      )
+    </if>
+    group by service_theme_day.id
+    order by service_theme_day.top ASC,month DESC
+  </select>
+
+  <select id="selectByThemeDayId" parameterType="java.lang.String" resultMap="BaseResultMapByName">
+    select
+    <include refid="name_Column_List" />,group_concat(sys_party_member_information.name order by sys_party_member_information.id) as participants_name
+    from  (sys_party_member_information x,sys_party_member_information y,service_theme_day,sys_organizational_structure)
+    left join sys_party_member_information on find_in_set(sys_party_member_information.id,service_theme_day.participants_id)
+    where service_theme_day.id = #{id,jdbcType=VARCHAR}
+    and sys_organizational_structure.organization_id=service_theme_day.organization_id
+    and x.id=service_theme_day.branch_secretary_id
+    and y.id=service_theme_day.editor_id
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_theme_day
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceThemeDay">
+    insert into service_theme_day (id,title ,college_id, party_members_number,
+      branch_secretary_id, phone, learning_time, 
+      learning_place, learning_content, learning_way, 
+      month, participants_id, overall_effect, 
+      top)
+    values (#{id,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR}, #{collegeId,jdbcType=VARCHAR}, #{partyMembersNumber,jdbcType=VARCHAR},
+      #{branchSecretaryId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{learningTime,jdbcType=TIMESTAMP}, 
+      #{learningPlace,jdbcType=VARCHAR}, #{learningContent,jdbcType=VARCHAR}, #{learningWay,jdbcType=VARCHAR}, 
+      #{month,jdbcType=VARCHAR}, #{participantsId,jdbcType=VARCHAR}, #{overallEffect,jdbcType=VARCHAR}, 
+      #{top,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceThemeDay">
+    insert into service_theme_day
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title!=null">
+        title,
+      </if>
+      <if test="collegeId != null">
+        college_id,
+      </if>
+      <if test="partyMembersNumber != null">
+        party_members_number,
+      </if>
+      <if test="branchSecretaryId != null">
+        branch_secretary_id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="learningTime != null">
+        learning_time,
+      </if>
+      <if test="learningPlace != null">
+        learning_place,
+      </if>
+      <if test="learningContent != null">
+        learning_content,
+      </if>
+      <if test="learningWay != null">
+        learning_way,
+      </if>
+      <if test="month != null">
+        month,
+      </if>
+      <if test="participantsId != null">
+        participants_id,
+      </if>
+      <if test="overallEffect != null">
+        overall_effect,
+      </if>
+      <if test="top != null">
+        top,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="title!=null">
+        #{title,jdbcType=VARCHAR}
+      </if>
+      <if test="collegeId != null">
+        #{collegeId,jdbcType=VARCHAR},
+      </if>
+      <if test="partyMembersNumber != null">
+        #{partyMembersNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="branchSecretaryId != null">
+        #{branchSecretaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="learningTime != null">
+        #{learningTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="learningPlace != null">
+        #{learningPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="learningContent != null">
+        #{learningContent,jdbcType=VARCHAR},
+      </if>
+      <if test="learningWay != null">
+        #{learningWay,jdbcType=VARCHAR},
+      </if>
+      <if test="month != null">
+        #{month,jdbcType=VARCHAR},
+      </if>
+      <if test="participantsId != null">
+        #{participantsId,jdbcType=VARCHAR},
+      </if>
+      <if test="overallEffect != null">
+        #{overallEffect,jdbcType=VARCHAR},
+      </if>
+      <if test="top != null">
+        #{top,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceThemeDay">
+    update service_theme_day
+    <set>
+      <if test="title!=null">
+        #{title,jdbcType=VARCHAR}
+      </if>
+      <if test="collegeId != null">
+        college_id = #{collegeId,jdbcType=VARCHAR},
+      </if>
+      <if test="partyMembersNumber != null">
+        party_members_number = #{partyMembersNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="branchSecretaryId != null">
+        branch_secretary_id = #{branchSecretaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="learningTime != null">
+        learning_time = #{learningTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="learningPlace != null">
+        learning_place = #{learningPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="learningContent != null">
+        learning_content = #{learningContent,jdbcType=VARCHAR},
+      </if>
+      <if test="learningWay != null">
+        learning_way = #{learningWay,jdbcType=VARCHAR},
+      </if>
+      <if test="month != null">
+        month = #{month,jdbcType=VARCHAR},
+      </if>
+      <if test="participantsId != null">
+        participants_id = #{participantsId,jdbcType=VARCHAR},
+      </if>
+      <if test="overallEffect != null">
+        overall_effect = #{overallEffect,jdbcType=VARCHAR},
+      </if>
+      <if test="top != null">
+        top = #{top,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceThemeDay">
+    update service_theme_day
+    set  title=#{title,jdbcType=VARCHAR},
+      college_id = #{collegeId,jdbcType=VARCHAR},
+      party_members_number = #{partyMembersNumber,jdbcType=VARCHAR},
+      branch_secretary_id = #{branchSecretaryId,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      learning_time = #{learningTime,jdbcType=TIMESTAMP},
+      learning_place = #{learningPlace,jdbcType=VARCHAR},
+      learning_content = #{learningContent,jdbcType=VARCHAR},
+      learning_way = #{learningWay,jdbcType=VARCHAR},
+      month = #{month,jdbcType=VARCHAR},
+      participants_id = #{participantsId,jdbcType=VARCHAR},
+      overall_effect = #{overallEffect,jdbcType=VARCHAR},
+      top = #{top,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateBrowsingByPrimaryKey" parameterType="java.lang.String">
+    update service_theme_day
+    set views_number=if(isNull(views_number),0,views_number)+1
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updatePraiseByPrimaryKeyAdd" parameterType="java.lang.String">
+    update service_theme_day
+    set likes_number=if(isNull(likes_number),0,likes_number)+1
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updatePraiseByPrimaryKeyReduce" parameterType="java.lang.String">
+    update service_theme_day
+    set likes_number=if(isNull(likes_number),0,likes_number)-1
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+
+</mapper>

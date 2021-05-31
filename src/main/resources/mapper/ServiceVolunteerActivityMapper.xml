@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceVolunteerActivityMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceVolunteerActivity">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="activity_title" jdbcType="VARCHAR" property="activityTitle" />
+    <result column="activity_contact" jdbcType="VARCHAR" property="activityContact" />
+    <result column="contact_number" jdbcType="VARCHAR" property="contactNumber" />
+    <result column="activity_location" jdbcType="VARCHAR" property="activityLocation" />
+    <result column="meeting_place" jdbcType="VARCHAR" property="meetingPlace" />
+    <result column="registration_deadline" jdbcType="TIMESTAMP" property="registrationDeadline" />
+    <result column="activity_time" jdbcType="TIMESTAMP" property="activityTime" />
+    <result column="activity_state" jdbcType="VARCHAR" property="activityState" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="annex" jdbcType="VARCHAR" property="annex" />
+    <result column="activity_sponsor_id" jdbcType="VARCHAR" property="activitySponsorId" />
+    <result column="sign_up_number" jdbcType="INTEGER" property="signUpNumber" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="reading_volume" jdbcType="INTEGER" property="readingVolume" />
+    <result column="activity_source" jdbcType="VARCHAR" property="activitySource" />
+    <result column="submission_time" jdbcType="TIMESTAMP" property="submissionTime" />
+    <result column="approval_state" jdbcType="VARCHAR" property="approvalState" />
+    <result column="reviewer_id" jdbcType="VARCHAR" property="reviewerId" />
+    <result column="review_time" jdbcType="TIMESTAMP" property="reviewTime" />
+    <result column="like_number" jdbcType="INTEGER" property="likeNumber" />
+    <result column="review_description" jdbcType="VARCHAR" property="reviewDescription" />
+    <result column="activity_content" jdbcType="LONGVARCHAR" property="activityContent" />
+  </resultMap>
+
+  <resultMap id="ActivityMap" type="com.cqut.building.dto.SetTimeActivityDto">
+    <result column="id" jdbcType="VARCHAR" property="id"/>
+    <result column="registration_deadline" jdbcType="TIMESTAMP" property="registrationDeadline"/>
+    <result column="activity_state" jdbcType="VARCHAR" property="activityState"/>
+    <result column="approval_state" jdbcType="VARCHAR" property="approvalState"/>
+  </resultMap>
+
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cqut.building.entity.ServiceVolunteerActivity">
+    <result column="activity_content" jdbcType="LONGVARCHAR" property="activityContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_title, activity_contact, contact_number, activity_location, meeting_place, 
+    registration_deadline, activity_time, activity_state, picture, annex, activity_sponsor_id, 
+    sign_up_number, release_time, reading_volume, activity_source, submission_time, approval_state, 
+    reviewer_id, review_time, like_number, review_description
+  </sql>
+  <sql id="Blob_Column_List">
+    activity_content
+  </sql>
+  <sql id="Activity_time">
+    id,registration_deadline,activity_state,approval_state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from service_volunteer_activity
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getAllVolunteerActivities" resultMap="BaseResultMap">
+    select * from service_volunteer_activity
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_volunteer_activity
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceVolunteerActivity">
+    insert into service_volunteer_activity (id, activity_title, activity_contact, 
+      contact_number, activity_location, meeting_place, 
+      registration_deadline, activity_time, 
+      activity_state, picture, annex, 
+      activity_sponsor_id, sign_up_number, release_time, 
+      reading_volume, activity_source, submission_time, 
+      approval_state, reviewer_id, review_time, 
+      like_number, review_description, activity_content
+      )
+    values (#{id,jdbcType=VARCHAR}, #{activityTitle,jdbcType=VARCHAR}, #{activityContact,jdbcType=VARCHAR}, 
+      #{contactNumber,jdbcType=VARCHAR}, #{activityLocation,jdbcType=VARCHAR}, #{meetingPlace,jdbcType=VARCHAR}, 
+      #{registrationDeadline,jdbcType=TIMESTAMP}, #{activityTime,jdbcType=TIMESTAMP}, 
+      #{activityState,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{annex,jdbcType=VARCHAR}, 
+      #{activitySponsorId,jdbcType=VARCHAR}, #{signUpNumber,jdbcType=INTEGER}, #{releaseTime,jdbcType=TIMESTAMP}, 
+      #{readingVolume,jdbcType=INTEGER}, #{activitySource,jdbcType=VARCHAR}, #{submissionTime,jdbcType=TIMESTAMP}, 
+      #{approvalState,jdbcType=VARCHAR}, #{reviewerId,jdbcType=VARCHAR}, #{reviewTime,jdbcType=TIMESTAMP}, 
+      #{likeNumber,jdbcType=INTEGER}, #{reviewDescription,jdbcType=VARCHAR}, #{activityContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+
+  <!--获取活动截止时间进行判断-->
+  <select id="getActivityTime" resultMap="ActivityMap">
+    select
+    <include refid="Activity_time"/>
+    from service_volunteer_activity where approval_state='1' and activity_state!='4'
+  </select>
+
+  <update id="updateActivityTimeState" parameterType="java.util.List">
+    update service_volunteer_activity set activity_state='3'
+    where id in
+    <foreach collection="list" index="index" item="item"
+             separator="," open="(" close=")">
+      #{item.id}
+    </foreach>
+  </update>
+
+  <!--<update id="updateActivityTimeState" parameterType="java.util.List">-->
+    <!--<foreach collection="list" index="index" item="item"-->
+             <!--separator=";">-->
+      <!--update service_volunteer_activity set activity_state=#{id.activity_state}-->
+      <!--where id in-->
+      <!--#{item.id}-->
+    <!--</foreach>-->
+  <!--</update>-->
+
+
+
+
+  <insert id="insertActivity" parameterType="com.cqut.building.dto.ServiceVolunteerActivityDto">
+    <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+      select replace(uuid(),'-','') as id from dual
+    </selectKey>
+    insert into service_volunteer_activity (id, activity_title, activity_contact,
+      contact_number, activity_location, meeting_place,
+      registration_deadline, activity_time,
+      activity_state, picture, annex,
+      activity_sponsor_id, sign_up_number, release_time,
+      reading_volume, activity_source, submission_time,
+      approval_state, reviewer_id, review_time,
+      like_number, review_description, activity_content
+      )
+    values (#{id,jdbcType=VARCHAR}, #{activityTitle,jdbcType=VARCHAR}, #{activityContact,jdbcType=VARCHAR},
+      #{contactNumber,jdbcType=VARCHAR}, #{activityLocation,jdbcType=VARCHAR}, #{meetingPlace,jdbcType=VARCHAR},
+      #{lastDate,jdbcType=TIMESTAMP}, #{gatherDate,jdbcType=TIMESTAMP},
+      #{activityState,jdbcType=VARCHAR}, #{picUrl,jdbcType=VARCHAR}, #{pluginUrl,jdbcType=VARCHAR},
+      #{activitySponsorId,jdbcType=VARCHAR}, #{signUpNumber,jdbcType=INTEGER}, #{releaseTime,jdbcType=TIMESTAMP},
+      #{readingVolume,jdbcType=INTEGER}, #{activitySource,jdbcType=VARCHAR}, #{submissionTime,jdbcType=TIMESTAMP},
+      #{approvalState,jdbcType=VARCHAR}, #{reviewerId,jdbcType=VARCHAR}, #{reviewTime,jdbcType=TIMESTAMP},
+      #{likeNumber,jdbcType=INTEGER}, #{reviewDescription,jdbcType=VARCHAR}, #{activityContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceVolunteerActivity">
+    insert into service_volunteer_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="activityTitle != null">
+        activity_title,
+      </if>
+      <if test="activityContact != null">
+        activity_contact,
+      </if>
+      <if test="contactNumber != null">
+        contact_number,
+      </if>
+      <if test="activityLocation != null">
+        activity_location,
+      </if>
+      <if test="meetingPlace != null">
+        meeting_place,
+      </if>
+      <if test="registrationDeadline != null">
+        registration_deadline,
+      </if>
+      <if test="activityTime != null">
+        activity_time,
+      </if>
+      <if test="activityState != null">
+        activity_state,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+      <if test="annex != null">
+        annex,
+      </if>
+      <if test="activitySponsorId != null">
+        activity_sponsor_id,
+      </if>
+      <if test="signUpNumber != null">
+        sign_up_number,
+      </if>
+      <if test="releaseTime != null">
+        release_time,
+      </if>
+      <if test="readingVolume != null">
+        reading_volume,
+      </if>
+      <if test="activitySource != null">
+        activity_source,
+      </if>
+      <if test="submissionTime != null">
+        submission_time,
+      </if>
+      <if test="approvalState != null">
+        approval_state,
+      </if>
+      <if test="reviewerId != null">
+        reviewer_id,
+      </if>
+      <if test="reviewTime != null">
+        review_time,
+      </if>
+      <if test="likeNumber != null">
+        like_number,
+      </if>
+      <if test="reviewDescription != null">
+        review_description,
+      </if>
+      <if test="activityContent != null">
+        activity_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTitle != null">
+        #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="activityContact != null">
+        #{activityContact,jdbcType=VARCHAR},
+      </if>
+      <if test="contactNumber != null">
+        #{contactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="activityLocation != null">
+        #{activityLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingPlace != null">
+        #{meetingPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationDeadline != null">
+        #{registrationDeadline,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityTime != null">
+        #{activityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityState != null">
+        #{activityState,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="annex != null">
+        #{annex,jdbcType=VARCHAR},
+      </if>
+      <if test="activitySponsorId != null">
+        #{activitySponsorId,jdbcType=VARCHAR},
+      </if>
+      <if test="signUpNumber != null">
+        #{signUpNumber,jdbcType=INTEGER},
+      </if>
+      <if test="releaseTime != null">
+        #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readingVolume != null">
+        #{readingVolume,jdbcType=INTEGER},
+      </if>
+      <if test="activitySource != null">
+        #{activitySource,jdbcType=VARCHAR},
+      </if>
+      <if test="submissionTime != null">
+        #{submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approvalState != null">
+        #{approvalState,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewerId != null">
+        #{reviewerId,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewTime != null">
+        #{reviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="likeNumber != null">
+        #{likeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="reviewDescription != null">
+        #{reviewDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="activityContent != null">
+        #{activityContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceVolunteerActivity">
+    update service_volunteer_activity
+    <set>
+      <if test="activityTitle != null">
+        activity_title = #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="activityContact != null">
+        activity_contact = #{activityContact,jdbcType=VARCHAR},
+      </if>
+      <if test="contactNumber != null">
+        contact_number = #{contactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="activityLocation != null">
+        activity_location = #{activityLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingPlace != null">
+        meeting_place = #{meetingPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationDeadline != null">
+        registration_deadline = #{registrationDeadline,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityTime != null">
+        activity_time = #{activityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityState != null">
+        activity_state = #{activityState,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="annex != null">
+        annex = #{annex,jdbcType=VARCHAR},
+      </if>
+      <if test="activitySponsorId != null">
+        activity_sponsor_id = #{activitySponsorId,jdbcType=VARCHAR},
+      </if>
+      <if test="signUpNumber != null">
+        sign_up_number = #{signUpNumber,jdbcType=INTEGER},
+      </if>
+      <if test="releaseTime != null">
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readingVolume != null">
+        reading_volume = #{readingVolume,jdbcType=INTEGER},
+      </if>
+      <if test="activitySource != null">
+        activity_source = #{activitySource,jdbcType=VARCHAR},
+      </if>
+      <if test="submissionTime != null">
+        submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approvalState != null">
+        approval_state = #{approvalState,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewerId != null">
+        reviewer_id = #{reviewerId,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewTime != null">
+        review_time = #{reviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="likeNumber != null">
+        like_number = #{likeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="reviewDescription != null">
+        review_description = #{reviewDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="activityContent != null">
+        activity_content = #{activityContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cqut.building.entity.ServiceVolunteerActivity">
+    update service_volunteer_activity
+    set activity_title = #{activityTitle,jdbcType=VARCHAR},
+      activity_contact = #{activityContact,jdbcType=VARCHAR},
+      contact_number = #{contactNumber,jdbcType=VARCHAR},
+      activity_location = #{activityLocation,jdbcType=VARCHAR},
+      meeting_place = #{meetingPlace,jdbcType=VARCHAR},
+      registration_deadline = #{registrationDeadline,jdbcType=TIMESTAMP},
+      activity_time = #{activityTime,jdbcType=TIMESTAMP},
+      activity_state = #{activityState,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=VARCHAR},
+      annex = #{annex,jdbcType=VARCHAR},
+      activity_sponsor_id = #{activitySponsorId,jdbcType=VARCHAR},
+      sign_up_number = #{signUpNumber,jdbcType=INTEGER},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      reading_volume = #{readingVolume,jdbcType=INTEGER},
+      activity_source = #{activitySource,jdbcType=VARCHAR},
+      submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      approval_state = #{approvalState,jdbcType=VARCHAR},
+      reviewer_id = #{reviewerId,jdbcType=VARCHAR},
+      review_time = #{reviewTime,jdbcType=TIMESTAMP},
+      like_number = #{likeNumber,jdbcType=INTEGER},
+      review_description = #{reviewDescription,jdbcType=VARCHAR},
+      activity_content = #{activityContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceVolunteerActivity">
+    update service_volunteer_activity
+    set activity_title = #{activityTitle,jdbcType=VARCHAR},
+      activity_contact = #{activityContact,jdbcType=VARCHAR},
+      contact_number = #{contactNumber,jdbcType=VARCHAR},
+      activity_location = #{activityLocation,jdbcType=VARCHAR},
+      meeting_place = #{meetingPlace,jdbcType=VARCHAR},
+      registration_deadline = #{registrationDeadline,jdbcType=TIMESTAMP},
+      activity_time = #{activityTime,jdbcType=TIMESTAMP},
+      activity_state = #{activityState,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=VARCHAR},
+      annex = #{annex,jdbcType=VARCHAR},
+      activity_sponsor_id = #{activitySponsorId,jdbcType=VARCHAR},
+      sign_up_number = #{signUpNumber,jdbcType=INTEGER},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      reading_volume = #{readingVolume,jdbcType=INTEGER},
+      activity_source = #{activitySource,jdbcType=VARCHAR},
+      submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      approval_state = #{approvalState,jdbcType=VARCHAR},
+      reviewer_id = #{reviewerId,jdbcType=VARCHAR},
+      review_time = #{reviewTime,jdbcType=TIMESTAMP},
+      like_number = #{likeNumber,jdbcType=INTEGER},
+      review_description = #{reviewDescription,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateActivityState" parameterType="java.lang.String">
+    update service_volunteer_activity set activity_state=#{activityState} where id = #{partyId}
+  </update>
+</mapper>

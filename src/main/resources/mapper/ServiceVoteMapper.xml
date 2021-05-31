@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <!--/**-->
+        <!--* 小程序>>>>应用>>>投票调查-->
+        <!--* 对应表：service_vote-->
+        <!--*/-->
+
+<mapper namespace="com.cqut.building.dao.ServiceVoteMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceVote">
+    <id column="vote_id" jdbcType="VARCHAR" property="voteId" />
+    <result column="vote_begin_time" jdbcType="TIMESTAMP" property="voteBeginTime" />
+    <result column="vote_end_time" jdbcType="TIMESTAMP" property="voteEndTime" />
+    <result column="sys_user_id" jdbcType="VARCHAR" property="sysUserId" />
+    <result column="vote_option" jdbcType="VARCHAR" property="voteOption" />
+    <result column="vote_status" jdbcType="INTEGER" property="voteStatus" />
+    <result column="vote_title" jdbcType="VARCHAR" property="voteTitle" />
+    <result column="sys_user_department" jdbcType="VARCHAR" property="sysUserDepartment" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cqut.building.entity.ServiceVote">
+    <result column="vote_content" jdbcType="LONGVARCHAR" property="voteContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    vote_id, vote_begin_time, vote_end_time, sys_user_id, vote_option, vote_status, vote_title, 
+    sys_user_department
+  </sql>
+  <sql id="Blob_Column_List">
+    vote_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from service_vote
+    where vote_id = #{voteId,jdbcType=VARCHAR}
+  </select>
+  <!--<select id="selectByName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">-->
+    <!--select vote_title-->
+    <!--from service_vote-->
+    <!--where vote_id = #{voteId,jdbcType=VARCHAR}-->
+  <!--</select>-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_vote
+    where vote_id = #{voteId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceVote">
+    insert into service_vote (vote_id, vote_begin_time, vote_end_time, 
+      sys_user_id, vote_option, vote_status, 
+      vote_title, sys_user_department, vote_content
+      )
+    values (#{voteId,jdbcType=VARCHAR}, #{voteBeginTime,jdbcType=TIMESTAMP}, #{voteEndTime,jdbcType=TIMESTAMP}, 
+      #{sysUserId,jdbcType=VARCHAR}, #{voteOption,jdbcType=VARCHAR}, #{voteStatus,jdbcType=INTEGER}, 
+      #{voteTitle,jdbcType=VARCHAR}, #{sysUserDepartment,jdbcType=VARCHAR}, #{voteContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceVote">
+    insert into service_vote
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="voteId != null">
+        vote_id,
+      </if>
+      <if test="voteBeginTime != null">
+        vote_begin_time,
+      </if>
+      <if test="voteEndTime != null">
+        vote_end_time,
+      </if>
+      <if test="sysUserId != null">
+        sys_user_id,
+      </if>
+      <if test="voteOption != null">
+        vote_option,
+      </if>
+      <if test="voteStatus != null">
+        vote_status,
+      </if>
+      <if test="voteTitle != null">
+        vote_title,
+      </if>
+      <if test="sysUserDepartment != null">
+        sys_user_department,
+      </if>
+      <if test="voteContent != null">
+        vote_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="voteId != null">
+        #{voteId,jdbcType=VARCHAR},
+      </if>
+      <if test="voteBeginTime != null">
+        #{voteBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteEndTime != null">
+        #{voteEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sysUserId != null">
+        #{sysUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="voteOption != null">
+        #{voteOption,jdbcType=VARCHAR},
+      </if>
+      <if test="voteStatus != null">
+        #{voteStatus,jdbcType=INTEGER},
+      </if>
+      <if test="voteTitle != null">
+        #{voteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="sysUserDepartment != null">
+        #{sysUserDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="voteContent != null">
+        #{voteContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceVote">
+    update service_vote
+    <set>
+      <if test="voteBeginTime != null">
+        vote_begin_time = #{voteBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteEndTime != null">
+        vote_end_time = #{voteEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sysUserId != null">
+        sys_user_id = #{sysUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="voteOption != null">
+        vote_option = #{voteOption,jdbcType=VARCHAR},
+      </if>
+      <if test="voteStatus != null">
+        vote_status = #{voteStatus,jdbcType=INTEGER},
+      </if>
+      <if test="voteTitle != null">
+        vote_title = #{voteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="sysUserDepartment != null">
+        sys_user_department = #{sysUserDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="voteContent != null">
+        vote_content = #{voteContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where vote_id = #{voteId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cqut.building.entity.ServiceVote">
+    update service_vote
+    set vote_begin_time = #{voteBeginTime,jdbcType=TIMESTAMP},
+      vote_end_time = #{voteEndTime,jdbcType=TIMESTAMP},
+      sys_user_id = #{sysUserId,jdbcType=VARCHAR},
+      vote_option = #{voteOption,jdbcType=VARCHAR},
+      vote_status = #{voteStatus,jdbcType=INTEGER},
+      vote_title = #{voteTitle,jdbcType=VARCHAR},
+      sys_user_department = #{sysUserDepartment,jdbcType=VARCHAR},
+      vote_content = #{voteContent,jdbcType=LONGVARCHAR}
+    where vote_id = #{voteId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceVote">
+    update service_vote
+    set vote_begin_time = #{voteBeginTime,jdbcType=TIMESTAMP},
+      vote_end_time = #{voteEndTime,jdbcType=TIMESTAMP},
+      sys_user_id = #{sysUserId,jdbcType=VARCHAR},
+      vote_option = #{voteOption,jdbcType=VARCHAR},
+      vote_status = #{voteStatus,jdbcType=INTEGER},
+      vote_title = #{voteTitle,jdbcType=VARCHAR},
+      sys_user_department = #{sysUserDepartment,jdbcType=VARCHAR}
+    where vote_id = #{voteId,jdbcType=VARCHAR}
+  </update>
+<!--  通过党员的partyId查询自己可以的投票-->
+  <select id="getVoteByPartyId" parameterType="java.lang.String" resultType="com.cqut.building.dto.VoteTitleDto">
+    select vote_id as id,vote_title as title,spmi.`name` as name ,vote_begin_time as beginTime,vote_end_time as endTime,vote_status as status
+    from service_vote as sv,sys_party_organization_post as spop,sys_party_member_information as spmi
+    where spop.organization_id=sv.organization_id and sv.sys_user_id=spmi.id and spop.party_id=#{partyId,jdbcType=VARCHAR}
+  </select>
+<!--  通过投票ID获取投票详情 -->
+  <select id="getVoteByVoteId" parameterType="java.lang.String" resultType="com.cqut.building.dto.VoteDto">
+    select vote_id as voteId,vote_title as title,vote_content as content,name,organization_name as organizationName
+    ,vote_begin_time as voteBeginTime,vote_end_time as voteEndTime,vote_status as status
+    from service_vote as sv,sys_party_member_information as spmi , sys_organizational_structure as sos
+    ,sys_party_organization_post as spop
+    where sv.sys_user_id=spmi.id and sv.sys_user_id=spop.party_id and
+     sos.organization_id=spop.organization_id and sv.vote_id=#{voteId,jdbcType=VARCHAR}
+  </select>
+
+  <!--  通过投票ID获取投票option -->
+  <select id="getVoteOption" parameterType="java.lang.String" resultType="com.cqut.building.dto.VoteOptionDto">
+      select id, service_vote_option.option as theOption,option_content as optionContent
+      from service_vote_option
+      where vote_id=#{voteId,jdbcType=VARCHAR}
+      GROUP BY service_vote_option.option
+  </select>
+
+<!--  插入投票记录-->
+  <insert id="insertVoteOption" parameterType="com.cqut.building.entity.ServiceVoteRecord">
+    insert into service_vote_record(id,vote_id,option_id,party_id)
+    values(#{id,jdbcType=VARCHAR},#{voteId,jdbcType=VARCHAR},#{optionId,jdbcType=VARCHAR},#{partyId,jdbcType=VARCHAR})
+  </insert>
+
+
+
+<!--  根据成员的partyId的查询-->
+  <select id="isOptioned" parameterType="com.cqut.building.entity.ServiceVoteRecord" resultType="java.lang.String">
+    select option_id as theOption
+     from service_vote_record
+     where party_id=#{partyId,jdbcType=VARCHAR} and service_vote_record.vote_id=#{voteId,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceLeaveWordsMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceLeaveWords">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="leave_words_time" jdbcType="TIMESTAMP" property="leaveWordsTime" />
+    <result column="wx_user_id" jdbcType="VARCHAR" property="wxUserId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="reply_time" jdbcType="TIMESTAMP" property="replyTime" />
+    <result column="leave_organization_id" jdbcType="VARCHAR" property="leaveOrganizationId" />
+    <result column="leave_post_id" jdbcType="VARCHAR" property="leavePostId" />
+    <result column="reply_organization_id" jdbcType="VARCHAR" property="replyOrganizationId" />
+    <result column="reply_post_id" jdbcType="VARCHAR" property="replyPostId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cqut.building.entity.ServiceLeaveWords">
+    <result column="leave_words_content" jdbcType="LONGVARCHAR" property="leaveWordsContent" />
+    <result column="reply_content" jdbcType="LONGVARCHAR" property="replyContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, leave_words_time, wx_user_id, user_id, reply_time, leave_organization_id, leave_post_id, 
+    reply_organization_id, reply_post_id
+  </sql>
+  <sql id="Blob_Column_List">
+    leave_words_content, reply_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from service_leave_words
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_leave_words
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceLeaveWords">
+    insert into service_leave_words (id, leave_words_time, wx_user_id, 
+      user_id, reply_time, leave_organization_id, 
+      leave_post_id, reply_organization_id, reply_post_id, 
+      leave_words_content, reply_content
+      )
+    values (#{id,jdbcType=VARCHAR}, #{leaveWordsTime,jdbcType=TIMESTAMP}, #{wxUserId,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{replyTime,jdbcType=TIMESTAMP}, #{leaveOrganizationId,jdbcType=VARCHAR}, 
+      #{leavePostId,jdbcType=VARCHAR}, #{replyOrganizationId,jdbcType=VARCHAR}, #{replyPostId,jdbcType=VARCHAR}, 
+      #{leaveWordsContent,jdbcType=LONGVARCHAR}, #{replyContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceLeaveWords">
+    insert into service_leave_words
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="leaveWordsTime != null">
+        leave_words_time,
+      </if>
+      <if test="wxUserId != null">
+        wx_user_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="replyTime != null">
+        reply_time,
+      </if>
+      <if test="leaveOrganizationId != null">
+        leave_organization_id,
+      </if>
+      <if test="leavePostId != null">
+        leave_post_id,
+      </if>
+      <if test="replyOrganizationId != null">
+        reply_organization_id,
+      </if>
+      <if test="replyPostId != null">
+        reply_post_id,
+      </if>
+      <if test="leaveWordsContent != null">
+        leave_words_content,
+      </if>
+      <if test="replyContent != null">
+        reply_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveWordsTime != null">
+        #{leaveWordsTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="wxUserId != null">
+        #{wxUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyTime != null">
+        #{replyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="leaveOrganizationId != null">
+        #{leaveOrganizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="leavePostId != null">
+        #{leavePostId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyOrganizationId != null">
+        #{replyOrganizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyPostId != null">
+        #{replyPostId,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveWordsContent != null">
+        #{leaveWordsContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="replyContent != null">
+        #{replyContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceLeaveWords">
+    update service_leave_words
+    <set>
+      <if test="leaveWordsTime != null">
+        leave_words_time = #{leaveWordsTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="wxUserId != null">
+        wx_user_id = #{wxUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyTime != null">
+        reply_time = #{replyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="leaveOrganizationId != null">
+        leave_organization_id = #{leaveOrganizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="leavePostId != null">
+        leave_post_id = #{leavePostId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyOrganizationId != null">
+        reply_organization_id = #{replyOrganizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="replyPostId != null">
+        reply_post_id = #{replyPostId,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveWordsContent != null">
+        leave_words_content = #{leaveWordsContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="replyContent != null">
+        reply_content = #{replyContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cqut.building.entity.ServiceLeaveWords">
+    update service_leave_words
+    set leave_words_time = #{leaveWordsTime,jdbcType=TIMESTAMP},
+      wx_user_id = #{wxUserId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      reply_time = #{replyTime,jdbcType=TIMESTAMP},
+      leave_organization_id = #{leaveOrganizationId,jdbcType=VARCHAR},
+      leave_post_id = #{leavePostId,jdbcType=VARCHAR},
+      reply_organization_id = #{replyOrganizationId,jdbcType=VARCHAR},
+      reply_post_id = #{replyPostId,jdbcType=VARCHAR},
+      leave_words_content = #{leaveWordsContent,jdbcType=LONGVARCHAR},
+      reply_content = #{replyContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceLeaveWords">
+    update service_leave_words
+    set leave_words_time = #{leaveWordsTime,jdbcType=TIMESTAMP},
+      wx_user_id = #{wxUserId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      reply_time = #{replyTime,jdbcType=TIMESTAMP},
+      leave_organization_id = #{leaveOrganizationId,jdbcType=VARCHAR},
+      leave_post_id = #{leavePostId,jdbcType=VARCHAR},
+      reply_organization_id = #{replyOrganizationId,jdbcType=VARCHAR},
+      reply_post_id = #{replyPostId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="getLeaveWordsList" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select * from service_leave_words where wx_user_id = #{partyId,jdbcType=VARCHAR} and !ISNULL(user_id)
+  </select>
+</mapper>

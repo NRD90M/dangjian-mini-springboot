@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--党员信息表-->
+<!--对应表：sys_party_member_information-->
+
+<mapper namespace="com.cqut.building.dao.SysPartyMemberInformationMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.SysPartyMemberInformation">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="sno_or_job_number" jdbcType="VARCHAR" property="snoOrJobNumber" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sex" jdbcType="BIT" property="sex" />
+    <result column="party_join_time" jdbcType="TIMESTAMP" property="partyJoinTime" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="classification" jdbcType="VARCHAR" property="classification" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, sno_or_job_number, name, sex, party_join_time,
+    contact, classification
+  </sql>
+
+  <!--通过姓名、学号/工号、学院id、职务id、联系方式、类别进行比对-->
+  <select id="compareTo" parameterType="com.cqut.building.dto.IsAuditedDataDto" resultType="java.lang.String">
+    select spi.id
+    from sys_party_member_information spi left join sys_party_organization_post sop on
+    spi.id = sop.party_id where sno_or_job_number=#{snoOrJobNumber} and
+    name = #{name} and contact = #{contact} and classification=
+    #{classification} and sop.organization_id=#{organizationId} and sop.post_id=#{positionId}
+  </select>
+
+  <select id="getNameByPartyId" parameterType="java.lang.String" resultType="java.lang.String">
+    select name from sys_party_member_information where id=#{id}
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_party_member_information
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_party_member_information
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.SysPartyMemberInformation">
+    insert into sys_party_member_information (id, sno_or_job_number, name, 
+       sex, party_join_time,
+      contact, classification
+      )
+    values (#{id,jdbcType=VARCHAR}, #{snoOrJobNumber,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+       #{sex,jdbcType=BIT}, #{partyJoinTime,jdbcType=TIMESTAMP},
+       #{contact,jdbcType=VARCHAR}, #{classification,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.SysPartyMemberInformation">
+    insert into sys_party_member_information
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="snoOrJobNumber != null">
+        sno_or_job_number,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="partyJoinTime != null">
+        party_join_time,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="classification != null">
+        classification,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="snoOrJobNumber != null">
+        #{snoOrJobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+
+      <if test="sex != null">
+        #{sex,jdbcType=BIT},
+      </if>
+      <if test="partyJoinTime != null">
+        #{partyJoinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="classification != null">
+        #{classification,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.SysPartyMemberInformation">
+    update sys_party_member_information
+    <set>
+      <if test="snoOrJobNumber != null">
+        sno_or_job_number = #{snoOrJobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=BIT},
+      </if>
+      <if test="partyJoinTime != null">
+        party_join_time = #{partyJoinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="classification != null">
+        classification = #{classification,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.SysPartyMemberInformation">
+    update sys_party_member_information
+    set sno_or_job_number = #{snoOrJobNumber,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=BIT},
+      party_join_time = #{partyJoinTime,jdbcType=TIMESTAMP},
+      contact = #{contact,jdbcType=VARCHAR},
+      classification = #{classification,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

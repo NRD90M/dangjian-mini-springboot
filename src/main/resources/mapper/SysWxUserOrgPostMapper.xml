@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.SysWxUserOrgPostMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.SysWxUserOrgPost">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="wx_user_id" jdbcType="VARCHAR" property="wxUserId" />
+    <result column="organization_id" jdbcType="VARCHAR" property="organizationId" />
+    <result column="post_id" jdbcType="VARCHAR" property="postId" />
+    <result column="is_audited" jdbcType="INTEGER" property="isAudited"/>
+  </resultMap>
+
+  <resultMap id="selectOrganizationPosition" type="com.cqut.building.dto.OrganizationPositionDto">
+    <result column="organization_id" jdbcType="VARCHAR" property="organizationId"/>
+    <result column="post_id" jdbcType="VARCHAR" property="positionId"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="post_name" jdbcType="VARCHAR" property="positionName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, wx_user_id, organization_id, post_id,is_audited
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_wx_user_org_post
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_wx_user_org_post
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.SysWxUserOrgPost">
+    <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+      select replace(uuid(),'-','') as id from dual
+    </selectKey>
+    insert into sys_wx_user_org_post (id, wx_user_id, organization_id, 
+      post_id,is_audited)
+    values (#{id,jdbcType=VARCHAR}, #{wxUserId,jdbcType=VARCHAR}, #{organizationId,jdbcType=VARCHAR}, 
+      #{postId,jdbcType=VARCHAR},#{isAudited,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.SysWxUserOrgPost">
+    insert into sys_wx_user_org_post
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="wxUserId != null">
+        wx_user_id,
+      </if>
+      <if test="organizationId != null">
+        organization_id,
+      </if>
+      <if test="postId != null">
+        post_id,
+      </if>
+      <if test="isAudited!=null">
+        is_audited
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="wxUserId != null">
+        #{wxUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationId != null">
+        #{organizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="postId != null">
+        #{postId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.SysWxUserOrgPost">
+    update sys_wx_user_org_post
+    <set>
+      <if test="wxUserId != null">
+        wx_user_id = #{wxUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationId != null">
+        organization_id = #{organizationId,jdbcType=VARCHAR},
+      </if>
+      <if test="postId != null">
+        post_id = #{postId,jdbcType=VARCHAR},
+      </if>
+      <if test="isAudited!=null">
+        is_audited = #{isAudited,jdbcType = INTEGER}
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.SysWxUserOrgPost">
+    update sys_wx_user_org_post
+    set wx_user_id = #{wxUserId,jdbcType=VARCHAR},
+      organization_id = #{organizationId,jdbcType=VARCHAR},
+      post_id = #{postId,jdbcType=VARCHAR},
+      is_audited = #{isAudited,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--添加信息到数据库-->
+  <insert id="insertOrganizationPosition" parameterType="com.cqut.building.dto.SecondAuditedDataDto">
+    <selectKey keyProperty="uuid" resultType="java.lang.String" order="BEFORE">
+      select replace(uuid(),'-','') as uuid from dual
+    </selectKey>
+    insert into sys_wx_user_org_post (id,wx_user_id,organization_id,post_id,is_audited)
+    values (#{uuid,jdbcType=VARCHAR},#{id,jdbcType=VARCHAR},
+    #{organizationId,jdbcType=VARCHAR},#{positionId,jdbcType=VARCHAR},#{isAudited,jdbcType=INTEGER})
+  </insert>
+
+  <!--根据openId查询是否有这条数据-->
+  <select id="selectByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from sys_wx_user_org_post where wx_user_id = #{openId,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateOrganizationPosition" parameterType="com.cqut.building.dto.SecondAuditedDataDto">
+    update sys_wx_user_org_post set organization_id=#{organizationId,jdbcType=VARCHAR},
+    post_id = #{positionId,jdbcType=VARCHAR},is_audited = #{isAudited,jdbcType=INTEGER} where wx_user_id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--查询职务组织通过党员id-->
+  <select id="selectOrganizationPosition" parameterType="java.lang.String" resultMap="selectOrganizationPosition">
+    select spop.organization_id,spop.post_id,sos.organization_name,sp.name post_name
+    from sys_wx_user_org_post spop
+    left join sys_organizational_structure sos on spop.organization_id = sos.organization_id
+    left join sys_post sp on spop.post_id = sp.id where spop.wx_user_id=#{wxUserId,jdbcType=VARCHAR} limit 0,1
+  </select>
+
+  <!--通过openId查询他已经认证过的所有组织和职务-->
+  <select id="selectAllOrganizationPosition" parameterType="com.cqut.building.entity.SysWxUserOrgPost" resultMap="selectOrganizationPosition">
+    select spop.organization_id,spop.post_id,sos.organization_name,sp.name post_name
+    from sys_wx_user_org_post spop
+    left join sys_organizational_structure sos on spop.organization_id = sos.organization_id
+    left join sys_post sp on spop.post_id = sp.id where spop.wx_user_id=#{wxUserId,jdbcType=VARCHAR}
+    and is_audited=#{isAudited,jdbcType=INTEGER}
+  </select>
+
+  <!--根据微信号和认证状态判断是否已经认证了-->
+  <select id="checkIsAudited" parameterType="com.cqut.building.entity.SysWxUserOrgPost" resultMap="BaseResultMap">
+    select * from sys_wx_user_org_post where wx_user_id=#{wxUserId,jdbcType=VARCHAR} and organization_id=#{organizationId,jdbcType=VARCHAR}
+    and post_id=#{postId,jdbcType=VARCHAR} and is_audited = #{isAudited,jdbcType=INTEGER}
+  </select>
+
+
+  <!--查看是否有正在认证审核的组织职务消息-->
+  <select id="checkAuditing" parameterType="com.cqut.building.entity.SysWxUserOrgPost" resultMap="BaseResultMap">
+    select * from sys_wx_user_org_post where wx_user_id = #{wxUserId,jdbcType=VARCHAR}
+    and is_audited=#{isAudited,jdbcType=INTEGER}
+  </select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceAnswerDetailsMapper">
+  <!--/**-->
+  <!--* 小程序>>>>应用>>>趣味答题-->
+  <!--* 对应表：service_examination_management-->
+  <!--*/-->
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceAnswerDetails">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="answer_record_id" jdbcType="VARCHAR" property="answerRecordId" />
+    <result column="answer_content" jdbcType="VARCHAR" property="answerContent" />
+    <result column="question_id" jdbcType="VARCHAR" property="questionId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, answer_record_id, answer_content, question_id
+  </sql>
+  <select id="selectByAnswerRecordId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from service_answer_details
+    where answer_record_id = #{answerRecordId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_answer_details
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceAnswerDetails">
+    insert into service_answer_details (id, answer_record_id, answer_content, 
+      question_id) values
+    <foreach collection="serviceAnswerDetailMap" index="key" item="item" separator=",">
+      ((select replace(uuid(), '-', '') as id from dual),  #{item.answerRecordId,jdbcType=VARCHAR}, #{item.answerContent,jdbcType=VARCHAR},
+      #{item.questionId,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceAnswerDetails">
+    insert into service_answer_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="answerRecordId != null">
+        answer_record_id,
+      </if>
+      <if test="answerContent != null">
+        answer_content,
+      </if>
+      <if test="questionId != null">
+        question_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="answerRecordId != null">
+        #{answerRecordId,jdbcType=VARCHAR},
+      </if>
+      <if test="answerContent != null">
+        #{answerContent,jdbcType=VARCHAR},
+      </if>
+      <if test="questionId != null">
+        #{questionId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceAnswerDetails">
+    update service_answer_details
+    <set>
+      <if test="answerRecordId != null">
+        answer_record_id = #{answerRecordId,jdbcType=VARCHAR},
+      </if>
+      <if test="answerContent != null">
+        answer_content = #{answerContent,jdbcType=VARCHAR},
+      </if>
+      <if test="questionId != null">
+        question_id = #{questionId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceAnswerDetails">
+    update service_answer_details
+    set answer_record_id = #{answerRecordId,jdbcType=VARCHAR},
+      answer_content = #{answerContent,jdbcType=VARCHAR},
+      question_id = #{questionId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

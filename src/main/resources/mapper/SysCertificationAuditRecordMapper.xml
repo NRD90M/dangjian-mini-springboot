@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--小程序>>>>我的>>>认证-->
+<!--对应表：sys_certification_audit_record-->
+
+<mapper namespace="com.cqut.building.dao.SysCertificationAuditRecordMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.SysCertificationAuditRecord">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="audit_result" jdbcType="INTEGER" property="auditResult" />
+    <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="wx_user_id" jdbcType="VARCHAR" property="wxUserId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, audit_result, audit_time, remarks, wx_user_id, user_id
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_certification_audit_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_certification_audit_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.SysCertificationAuditRecord">
+    insert into sys_certification_audit_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="auditResult != null">
+        audit_result,
+      </if>
+      <if test="auditTime != null">
+        audit_time,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="wxUserId != null">
+        wx_user_id,
+      </if>
+      <!--<if test="userId != null">-->
+        <!--user_id,-->
+      <!--</if>-->
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="auditResult != null">
+        #{auditResult,jdbcType=INTEGER},
+      </if>
+      <if test="auditTime != null">
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="wxUserId != null">
+        #{wxUserId,jdbcType=VARCHAR},
+      </if>
+      <!--<if test="userId != null">-->
+        <!--#{userId,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.SysCertificationAuditRecord">
+    update sys_certification_audit_record
+    <set>
+      <if test="auditResult != null">
+        audit_result = #{auditResult,jdbcType=INTEGER},
+      </if>
+      <if test="auditTime != null">
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="wxUserId != null">
+        wx_user_id = #{wxUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

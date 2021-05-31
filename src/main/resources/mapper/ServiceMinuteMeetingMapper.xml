@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.ServiceMinuteMeetingMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceMinuteMeeting">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="minute_type" jdbcType="VARCHAR" property="minuteType" />
+    <result column="meeting_id" jdbcType="VARCHAR" property="meetingId" />
+    <result column="meeting_recorder_id" jdbcType="VARCHAR" property="meetingRecorderId" />
+    <result column="minute_image" jdbcType="VARCHAR" property="minuteImage" />
+    <result column="recorder_time" jdbcType="TIMESTAMP" property="recorderTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cqut.building.entity.ServiceMinuteMeeting">
+    <result column="minute_content" jdbcType="LONGVARCHAR" property="minuteContent" />
+  </resultMap>
+
+  <!--合并查询Map-->
+  <resultMap id="MeetingResultMap" type="com.cqut.building.dto.ServiceMinuteMeetingDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="minute_type" jdbcType="VARCHAR" property="minuteType" />
+    <result column="meeting_id" jdbcType="VARCHAR" property="meetingId" />
+    <result column="meeting_recorder_id" jdbcType="VARCHAR" property="meetingRecorderId" />
+    <result column="recorder_time" jdbcType="TIMESTAMP" property="recorderTime" />
+    <result column="minute_image" jdbcType="VARCHAR" property="minuteImage" />
+    <result column="meeting_recorder_name" jdbcType="VARCHAR" property="meetingRecorderName" />
+    <result column="host_participate_name" jdbcType="VARCHAR" property="hostParticipateName" />
+    <result column="meeting_title" jdbcType="VARCHAR" property="meetingTitle" />
+  </resultMap>
+  <resultMap extends="MeetingResultMap" id="MeetingResultMapWithBLOBs" type="com.cqut.building.dto.ServiceMinuteMeetingDto">
+    <result column="minute_content" jdbcType="LONGVARCHAR" property="minuteContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    service_minute_meeting.id, minute_type, meeting_id, meeting_recorder_id, date_format(recorder_time,'%Y/%m/%d') as recorder_time,minute_image
+  </sql>
+  <sql id="Blob_Column_List">
+    minute_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from service_minute_meeting
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectMinuteInfoByMeetingId" parameterType="java.lang.String" resultMap="MeetingResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    ,
+    x.name as meeting_recorder_name,service_three_session_one_class.title as meeting_title,
+    group_concat(sys_party_member_information.name order by sys_party_member_information.id) as host_participate_name
+    from sys_party_member_information x,service_minute_meeting,service_three_session_one_class
+    left join sys_party_member_information on find_in_set(sys_party_member_information.id,service_three_session_one_class.host_participate)
+    where service_three_session_one_class.id=service_minute_meeting.meeting_id
+    and x.id=service_minute_meeting.meeting_recorder_id
+    and service_minute_meeting.meeting_id=#{meetingId,jdbcType=VARCHAR}
+  </select>
+  <select id="isHaveMinuteByMeetingId" parameterType="java.lang.String" resultType="java.util.Map">
+    SELECT DISTINCT IF(EXISTS(SELECT * FROM service_minute_meeting WHERE meeting_id=#{meetingId,jdbcType=VARCHAR}),1,0) AS isHave
+    FROM service_minute_meeting
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_minute_meeting
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceMinuteMeeting">
+    insert into service_minute_meeting (id, minute_type, meeting_id, 
+      meeting_recorder_id, recorder_time, minute_image,minute_content
+      )
+    values (#{id,jdbcType=VARCHAR}, #{minuteType,jdbcType=VARCHAR}, #{meetingId,jdbcType=VARCHAR}, 
+      #{meetingRecorderId,jdbcType=VARCHAR}, #{recorderTime,jdbcType=TIMESTAMP},#{minuteImage,jdbcType=VARCHAR}, #{minuteContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceMinuteMeeting">
+    insert into service_minute_meeting
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="minuteType != null">
+        minute_type,
+      </if>
+      <if test="meetingId != null">
+        meeting_id,
+      </if>
+      <if test="meetingRecorderId != null">
+        meeting_recorder_id,
+      </if>
+      <if test="recorderTime != null">
+        recorder_time,
+      </if>
+      <if test="minuteImage != null">
+        minute_image,
+      </if>
+      <if test="minuteContent != null">
+        minute_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="minuteType != null">
+        #{minuteType,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingId != null">
+        #{meetingId,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingRecorderId != null">
+        #{meetingRecorderId,jdbcType=VARCHAR},
+      </if>
+      <if test="recorderTime != null">
+        #{recorderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="minuteImage != null">
+        #{minuteImage,jdbcType=VARCHAR},
+      </if>
+      <if test="minuteContent != null">
+        #{minuteContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceMinuteMeeting">
+    update service_minute_meeting
+    <set>
+      <if test="minuteType != null">
+        minute_type = #{minuteType,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingId != null">
+        meeting_id = #{meetingId,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingRecorderId != null">
+        meeting_recorder_id = #{meetingRecorderId,jdbcType=VARCHAR},
+      </if>
+      <if test="recorderTime != null">
+        recorder_time = #{recorderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="minuteImage != null">
+        minute_image=#{minuteImage,jdbcType=VARCHAR},
+      </if>
+      <if test="minuteContent != null">
+        minute_content = #{minuteContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cqut.building.entity.ServiceMinuteMeeting">
+    update service_minute_meeting
+    set minute_type = #{minuteType,jdbcType=VARCHAR},
+      meeting_id = #{meetingId,jdbcType=VARCHAR},
+      meeting_recorder_id = #{meetingRecorderId,jdbcType=VARCHAR},
+      recorder_time = #{recorderTime,jdbcType=TIMESTAMP},
+      minute_image=#{minuteImage,jdbcType=VARCHAR},
+      minute_content = #{minuteContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceMinuteMeeting">
+    update service_minute_meeting
+    set minute_type = #{minuteType,jdbcType=VARCHAR},
+      meeting_id = #{meetingId,jdbcType=VARCHAR},
+      meeting_recorder_id = #{meetingRecorderId,jdbcType=VARCHAR},
+      recorder_time = #{recorderTime,jdbcType=TIMESTAMP},
+      minute_image=#{minuteImage,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

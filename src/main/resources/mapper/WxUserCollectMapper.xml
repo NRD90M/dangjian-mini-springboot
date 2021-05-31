@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--小程序>>>>我的>>>我的收藏-->
+<!--对应表：wx_user_collect-->
+
+<mapper namespace="com.cqut.building.dao.WxUserCollectMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.WxUserCollect">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="message_id" jdbcType="VARCHAR" property="messageId" />
+  </resultMap>
+
+  <resultMap id="CollectMap" type="com.cqut.building.dto.WxUserCollectDTO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="message_id" jdbcType="VARCHAR" property="messageId" />
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+  </resultMap>
+
+  <resultMap id="myCollectedArticle" type="com.cqut.building.dto.SelectCollectedArticleDto">
+    <id column="id" jdbcType="VARCHAR" property="articleId"/>
+    <result column="content" jdbcType="VARCHAR" property="content"/>
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime"/>
+    <result column="pic_url" jdbcType="VARCHAR" property="pictureUrl"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, user_id, message_id
+  </sql>
+
+  <select id="selectCollect" resultMap="CollectMap">
+    select
+    wx_user_collect.id,wx_user_collect.message_id,dynamic_article_management.title,
+    dynamic_article_management.check_time,dynamic_article_management.pic_url
+    from wx_user_collect,dynamic_article_management
+    where wx_user_collect.user_id=#{id,jdbcType=VARCHAR} and wx_user_collect.message_id = dynamic_article_management.id
+  </select>
+
+  <!--通过党员id和文章id查询是否收藏-->
+  <select id="isCollected" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from wx_user_collect where user_id=#{partyId,jdbcType=VARCHAR} and message_id=#{articleId,jdbcType=VARCHAR}
+  </select>
+
+  <!--根据user_id查询收藏文章-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from wx_user_collect
+    where user_id = #{user_id,jdbcType=VARCHAR}
+  </select>
+
+  <!--通过党员id查询自己收藏的文章-->
+  <select id="getMyCollectedArticle" parameterType="java.lang.String" resultMap="myCollectedArticle">
+    select id,content,check_time,pic_url from dynamic_article_management where id
+    in(select message_id from wx_user_collect where user_id = #{partyId,jdbcType=VARCHAR})
+  </select>
+
+  <!--根据id删除特定收藏-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from wx_user_collect
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <!--根据党员id和文章id删除记录-->
+  <delete id="deleteByUserIdAndArticleId" parameterType="java.lang.String">
+    delete from wx_user_collect where user_id=#{partyId,jdbcType=VARCHAR} and message_id=#{articleId,jdbcType=VARCHAR}
+  </delete>
+
+  <!--新增收藏文章-->
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.WxUserCollect">
+    insert into wx_user_collect
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="messageId != null">
+        message_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="messageId != null">
+        #{messageId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!--修改收藏文章-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.WxUserCollect">
+    update wx_user_collect
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="messageId != null">
+        message_id = #{messageId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

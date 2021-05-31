@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--/**-->
+<!--* 小程序>>>>首页>>>基层风采，党员先锋-->
+<!--* 对应表：dynamic_praise_record-->
+<!--*/-->
+<mapper namespace="com.cqut.building.dao.DynamicPraiseRecordMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.DynamicPraiseRecord">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="article_id" jdbcType="VARCHAR" property="articleId" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, article_id, time, user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dynamic_praise_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectPraiseRecordNumById" parameterType="com.cqut.building.dto.AboutPraiseRecordDto" resultType="java.lang.Integer">
+    select
+    count(*)
+    from dynamic_praise_record
+    where article_id = #{articleId,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dynamic_praise_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deletePraiseRecord" parameterType="com.cqut.building.dto.AboutPraiseRecordDto">
+    delete from dynamic_praise_record
+    where article_id = #{articleId,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertByArticleTrainId" parameterType="com.cqut.building.entity.DynamicPraiseRecord">
+    insert into dynamic_praise_record (id, article_id, time, 
+      user_id)
+    values (#{id,jdbcType=VARCHAR}, #{articleId,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, 
+      #{userId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.DynamicPraiseRecord">
+    insert into dynamic_praise_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="articleId != null">
+        #{articleId,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.DynamicPraiseRecord">
+    update dynamic_praise_record
+    <set>
+      <if test="articleId != null">
+        article_id = #{articleId,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.DynamicPraiseRecord">
+    update dynamic_praise_record
+    set article_id = #{articleId,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

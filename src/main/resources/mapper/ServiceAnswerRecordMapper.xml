@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--/**-->
+<!--* 小程序>>>>应用>>>趣味答题-->
+<!--* 对应表：service_answer_record-->
+<!--*/-->
+<mapper namespace="com.cqut.building.dao.ServiceAnswerRecordMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceAnswerRecord">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="examination_id" jdbcType="VARCHAR" property="examinationId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="answer_time" jdbcType="TIMESTAMP" property="answerTime" />
+    <result column="correct_question_number" jdbcType="INTEGER" property="correctQuestionNumber" />
+    <result column="question_total_number" jdbcType="INTEGER" property="questionTotalNumber" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, examination_id, user_id, answer_time,correct_question_number,question_total_number
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from service_answer_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_answer_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceAnswerRecord">
+    insert into service_answer_record (id, examination_id, user_id, 
+      answer_time, correct_question_number,question_total_number
+      )
+    values (#{id,jdbcType=VARCHAR}, #{examinationId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{answerTime,jdbcType=TIMESTAMP}, #{correctQuestionNumber,jdbcType=INTEGER},
+      #{questionTotalNumber,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceAnswerRecord">
+    insert into service_answer_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="examinationId != null">
+        examination_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="answerTime != null">
+        answer_time,
+      </if>
+      <if test="correctQuestionNumber != null">
+        correct_question_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="examinationId != null">
+        #{examinationId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="answerTime != null">
+        #{answerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answererInput != null">
+        #{answererInput,jdbcType=VARCHAR},
+      </if>
+      <if test="correctQuestionNumber != null">
+        #{correctQuestionNumber,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceAnswerRecord">
+    update service_answer_record
+    <set>
+      <if test="examinationId != null">
+        examination_id = #{examinationId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="answerTime != null">
+        answer_time = #{answerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="correctQuestionNumber != null">
+        correct_question_number = #{correctQuestionNumber,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceAnswerRecord">
+    update service_answer_record
+    set examination_id = #{examinationId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      answer_time = #{answerTime,jdbcType=TIMESTAMP},
+      correct_question_number = #{correctQuestionNumber,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

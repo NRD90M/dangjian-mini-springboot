@@ -1,0 +1,30 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+group = 'com.cqut'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.0'
+    runtimeOnly 'mysql:mysql-connector-java'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    compile 'mysql:mysql-connector-java:6.0.6'
+    compile group: 'com.github.pagehelper', name: 'pagehelper', version: '4.1.0'
+    compile group:'junit',name:'junit',version:'4.5'
+    compile group:'commons-codec',name:'commons-codec',version:'1.11'
+    compile group:'org.bouncycastle',name:'bcprov-jdk15on',version:'1.55'
+    compile 'org.json:json:20171018'
+}
+
+test {
+    useJUnitPlatform()
+}

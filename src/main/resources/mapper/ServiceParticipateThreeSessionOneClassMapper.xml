@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <!--/**-->
+        <!--* 小程序>>>>应用>>>三会一课的参会人员-->
+        <!--* 对应表：service_participate_three_session_one_class-->
+        <!--*/-->
+
+<mapper namespace="com.cqut.building.dao.ServiceParticipateThreeSessionOneClassMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceParticipateThreeSessionOneClass">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="three_session_one_class_id" jdbcType="VARCHAR" property="threeSessionOneClassId" />
+    <result column="participate_id" jdbcType="VARCHAR" property="participateId" />
+  </resultMap>
+  <resultMap id="BaseString" type="com.cqut.building.dto.ParticipateThreeSessionOneClassDto">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="meeting_time" jdbcType="TIMESTAMP" property="meetingTime" />
+    <result column="meeting_duration" jdbcType="VARCHAR" property="meetingDuration" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, three_session_one_class_id, participate_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from service_participate_three_session_one_class
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_participate_three_session_one_class
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceParticipateThreeSessionOneClass">
+    insert into service_participate_three_session_one_class (id, three_session_one_class_id, participate_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{threeSessionOneClassId,jdbcType=VARCHAR}, #{participateId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceParticipateThreeSessionOneClass">
+    insert into service_participate_three_session_one_class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="threeSessionOneClassId != null">
+        three_session_one_class_id,
+      </if>
+      <if test="participateId != null">
+        participate_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="threeSessionOneClassId != null">
+        #{threeSessionOneClassId,jdbcType=VARCHAR},
+      </if>
+      <if test="participateId != null">
+        #{participateId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceParticipateThreeSessionOneClass">
+    update service_participate_three_session_one_class
+    <set>
+      <if test="threeSessionOneClassId != null">
+        three_session_one_class_id = #{threeSessionOneClassId,jdbcType=VARCHAR},
+      </if>
+      <if test="participateId != null">
+        participate_id = #{participateId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceParticipateThreeSessionOneClass">
+    update service_participate_three_session_one_class
+    set three_session_one_class_id = #{threeSessionOneClassId,jdbcType=VARCHAR},
+      participate_id = #{participateId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+<!--根据个人id（参会人员id）查询三会一课-->
+  <select id="selectParticipateId" parameterType="java.lang.String" resultMap="BaseString">
+
+    SELECT id,title,release_time,meeting_time,meeting_duration from service_three_session_one_class
+        where id in (
+        SELECT three_session_one_class_id FROM service_participate_three_session_one_class WHERE participate_id =  #{participateId,jdbcType=VARCHAR}
+        ) and meeting_status='1'
+
+  </select>
+
+<!--  根据会议id查询参会人员-->
+  <select id="selectParticipateNameByClassId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT name FROM service_participate_three_session_one_class as pa,sys_party_member_information as me
+    where me.id=pa.participate_id and pa.three_session_one_class_id =  #{id,jdbcType=VARCHAR}
+  </select>
+</mapper>

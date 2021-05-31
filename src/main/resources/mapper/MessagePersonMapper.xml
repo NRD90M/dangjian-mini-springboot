@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqut.building.dao.MessagePersonMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.MessagePerson">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="message_id" jdbcType="VARCHAR" property="messageId" />
+    <result column="message_receive_id" jdbcType="VARCHAR" property="messageReceiveId" />
+    <result column="is_read" jdbcType="BIT" property="isRead" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, message_id, message_receive_id, is_read
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from message_person
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from message_person
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByMessagePerson" parameterType="java.lang.String">
+    delete from message_person
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.MessagePerson">
+    insert into message_person (id, message_id, message_receive_id, 
+      is_read)
+    values (#{id,jdbcType=VARCHAR}, #{messageId,jdbcType=VARCHAR}, #{messageReceiveId,jdbcType=VARCHAR}, 
+      #{isRead,jdbcType=BIT})
+  </insert>
+
+  <insert id="insertMessagePerson" parameterType="java.util.Map">
+    insert into message_person (id, message_id, message_receive_id,
+    is_read) values
+    <foreach collection="messagePersonMap" index="key" item="item" separator=",">
+       ((select replace(uuid(), '-', '') as id from dual), #{item,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR},0)
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.MessagePerson">
+    insert into message_person
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="messageId != null">
+        message_id,
+      </if>
+      <if test="messageReceiveId != null">
+        message_receive_id,
+      </if>
+      <if test="isRead != null">
+        is_read,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="messageId != null">
+        #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="messageReceiveId != null">
+        #{messageReceiveId,jdbcType=VARCHAR},
+      </if>
+      <if test="isRead != null">
+        #{isRead,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.MessagePerson">
+    update message_person
+    <set>
+      <if test="messageId != null">
+        message_id = #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="messageReceiveId != null">
+        message_receive_id = #{messageReceiveId,jdbcType=VARCHAR},
+      </if>
+      <if test="isRead != null">
+        is_read = #{isRead,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByIsRead" parameterType="com.cqut.building.entity.MessagePerson">
+    update message_person
+    set is_read = true
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

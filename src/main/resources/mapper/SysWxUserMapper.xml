@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--小程序>>>>我的>>>个人信息-->
+<!--对应表：sys_wx_user-->
+
+<mapper namespace="com.cqut.building.dao.SysWxUserMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.SysWxUser">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="student_job_number" jdbcType="VARCHAR" property="studentJobNumber" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="avatarurl" jdbcType="VARCHAR" property="avatarurl" />
+    <result column="is_audited" jdbcType="INTEGER" property="isAudited" />
+    <result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
+    <result column="tel_number" jdbcType="VARCHAR" property="telNumber" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="is_secretary" jdbcType="INTEGER" property="isSecretary" />
+    <result column="party_id" jdbcType="VARCHAR" property="partyId"/>
+  </resultMap>
+
+  <resultMap id="selectByOpenId" type="com.cqut.building.dto.SelectPersonalInformationDto">
+    <result column="party_id" jdbcType="VARCHAR" property="partyId"/>
+    <result column="is_secretary" jdbcType="INTEGER" property="isSecretary"/>
+    <result column="type" jdbcType="INTEGER" property="type"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="student_job_number" jdbcType="VARCHAR" property="studentJobNumber"/>
+    <result column="tel_number" jdbcType="VARCHAR" property="telNumber"/>
+    <collection property="organizationPosition" ofType="com.cqut.building.dto.OrganizationPositionDto"
+               column="party_id" select="selectOrganizationPosition">
+
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, nickname, sex, name, student_job_number, create_time, avatarurl, is_audited, 
+    verify_time,tel_number, type, is_secretary, party_id
+  </sql>
+
+
+  <!--父查询-->
+  <select id="selectByOpenId" parameterType="java.lang.String" resultMap="selectByOpenId">
+    select party_id,is_secretary,`type`,`name`,student_job_number,tel_number
+    from sys_wx_user where id=#{openId,jdbcType = VARCHAR}
+  </select>
+
+  <resultMap id="selectOrganizationPosition" type="com.cqut.building.dto.OrganizationPositionDto">
+    <result column="organization_id" jdbcType="VARCHAR" property="organizationId"/>
+    <result column="position_id" jdbcType="VARCHAR" property="positionId"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="position_name" jdbcType="VARCHAR" property="positionName"/>
+  </resultMap>
+  <!--子查询-->
+  <select id="selectOrganizationPosition" resultMap="selectOrganizationPosition">
+    select spop.organization_id organization_id,post_id position_id,organization_name,sp.name position_name from sys_wx_user wx
+    left join sys_party_organization_post spop on wx.party_id=spop.party_id
+    left join sys_organizational_structure sos on spop.organization_id = sos.organization_id
+    left join sys_post sp on spop.post_id = sp.id
+    where wx.party_id=#{partyId,jdbcType=VARCHAR}
+  </select>
+
+
+
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_wx_user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_wx_user
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.cqut.building.entity.SysWxUser">
+    insert into sys_wx_user (id, nickname, sex, 
+      name, student_job_number, create_time, 
+      avatarurl, is_audited, verify_time, 
+      tel_number, type,
+      is_secretary)
+    values (#{id,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{studentJobNumber,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{avatarurl,jdbcType=VARCHAR}, #{isAudited,jdbcType=INTEGER}, #{verifyTime,jdbcType=TIMESTAMP}, 
+      #{telNumber,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{isSecretary,jdbcType=INTEGER}
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.SysWxUser">
+    insert into sys_wx_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="studentJobNumber != null">
+        student_job_number,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="avatarurl != null">
+        avatarurl,
+      </if>
+      <if test="isAudited != null">
+        is_audited,
+      </if>
+      <if test="verifyTime != null">
+        verify_time,
+      </if>
+      <if test="telNumber != null">
+        tel_number,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="isSecretary != null">
+        is_secretary,
+      </if>
+      <if test="partyId != null">
+        party_id
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="studentJobNumber != null">
+        #{studentJobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="avatarurl != null">
+        #{avatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="isAudited != null">
+        #{isAudited,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTime != null">
+        #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="telNumber != null">
+        #{telNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="isSecretary != null">
+        #{isSecretary,jdbcType=INTEGER},
+      </if>
+      <if test="partyId != null">
+        #{partyId,jdbcType = VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.SysWxUser">
+    update sys_wx_user
+    <set>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="studentJobNumber != null">
+        student_job_number = #{studentJobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="avatarurl != null">
+        avatarurl = #{avatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="isAudited != null">
+        is_audited = #{isAudited,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTime != null">
+        verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="telNumber != null">
+        tel_number = #{telNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="isSecretary != null">
+        is_secretary = #{isSecretary,jdbcType=INTEGER},
+      </if>
+      <if test="partyId != null">
+        party_id = #{partyId,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--二次认证-->
+  <update id="secondAudited" parameterType="com.cqut.building.dto.SecondAuditedDataDto">
+    update sys_wx_user
+    <set>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="studentJobNumber != null">
+        student_job_number = #{studentJobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="avatarurl != null">
+        avatarurl = #{avatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="isAudited != null">
+        is_audited = #{isAudited,jdbcType=INTEGER},
+      </if>
+      <if test="telNumber != null">
+        tel_number = #{telNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="isSecretary != null">
+        is_secretary = #{isSecretary,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.SysWxUser">
+    update sys_wx_user
+    set nickname = #{nickname,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      student_job_number = #{studentJobNumber,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      avatarurl = #{avatarurl,jdbcType=VARCHAR},
+      is_audited = #{isAudited,jdbcType=INTEGER},
+      verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+      tel_number = #{telNumber,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      is_secretary = #{isSecretary,jdbcType=INTEGER},
+      party_id = #{partyId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--&lt;!&ndash;查询个人学院id&ndash;&gt;-->
+  <!--<select id="selectById">-->
+    <!--select-->
+    <!--college_id-->
+    <!--from sys_wx_user-->
+    <!--where id = #{id,jdbcType=VARCHAR}-->
+  <!--</select>-->
+
+  <!--判断是否认证-->
+  <select id="selectById">
+    select * from sys_wx_user where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <!--根据个人id查询姓名-->
+  <select id="selectByName">
+    select
+    name
+    from sys_wx_user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+        <!--/**-->
+        <!--* 小程序>>>>应用>>>三会一课-->
+        <!--* 对应表：service_three_session_one_class-->
+        <!--*/-->
+
+<mapper namespace="com.cqut.building.dao.ServiceThreeSessionOneClassMapper">
+  <resultMap id="BaseResultMap" type="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="host_participate" jdbcType="VARCHAR" property="hostParticipate" />
+    <result column="meeting_form" jdbcType="VARCHAR" property="meetingForm" />
+    <result column="meeting_category" jdbcType="VARCHAR" property="meetingCategory" />
+    <result column="school_or_college" jdbcType="VARCHAR" property="schoolOrCollege" />
+    <result column="meeting_time" jdbcType="TIMESTAMP" property="meetingTime" />
+    <result column="meeting_duration" jdbcType="VARCHAR" property="meetingDuration" />
+    <result column="meeting_status" jdbcType="VARCHAR" property="meetingStatus" />
+    <result column="meeting_level" jdbcType="VARCHAR" property="meetingLevel" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="meeting_editor_id" jdbcType="VARCHAR" property="meetingEditorId" />
+    <result column="minutes_meeting_id" jdbcType="VARCHAR" property="minutesMeetingId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    <result column="main_content" jdbcType="LONGVARCHAR" property="mainContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, host_participate, meeting_form, meeting_category, school_or_college, meeting_time, 
+    meeting_duration, meeting_status, meeting_level, release_time, meeting_editor_id, 
+    minutes_meeting_id
+  </sql>
+  <sql id="Blob_Column_List">
+    main_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.cqut.building.dto.ThreeSessionOneClassDto">
+    select service_three_session_one_class.id,title,release_time as releaseTime,name,main_content as mainContent,meeting_form as meetingForm,meeting_time as meetingTime,meeting_duration as meetingDuration
+    from service_three_session_one_class,sys_party_member_information
+    where service_three_session_one_class.id =  #{id,jdbcType=VARCHAR} and meeting_editor_id=sys_party_member_information.id
+  </select>
+  <select id="selectHostParticipate" parameterType="java.lang.String" resultType="java.util.Map">
+    select host_participate as hostParticipate
+    from service_three_session_one_class
+    where service_three_session_one_class.id =  #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from service_three_session_one_class
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    insert into service_three_session_one_class (id, title, host_participate, 
+      meeting_form, meeting_category, school_or_college, 
+      meeting_time, meeting_duration, meeting_status, 
+      meeting_level, release_time, meeting_editor_id, 
+      minutes_meeting_id, main_content)
+    values (#{id,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{hostParticipate,jdbcType=VARCHAR}, 
+      #{meetingForm,jdbcType=VARCHAR}, #{meetingCategory,jdbcType=VARCHAR}, #{schoolOrCollege,jdbcType=VARCHAR}, 
+      #{meetingTime,jdbcType=TIMESTAMP}, #{meetingDuration,jdbcType=VARCHAR}, #{meetingStatus,jdbcType=VARCHAR}, 
+      #{meetingLevel,jdbcType=VARCHAR}, #{releaseTime,jdbcType=TIMESTAMP}, #{meetingEditorId,jdbcType=VARCHAR}, 
+      #{minutesMeetingId,jdbcType=VARCHAR}, #{mainContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    insert into service_three_session_one_class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="hostParticipate != null">
+        host_participate,
+      </if>
+      <if test="meetingForm != null">
+        meeting_form,
+      </if>
+      <if test="meetingCategory != null">
+        meeting_category,
+      </if>
+      <if test="schoolOrCollege != null">
+        school_or_college,
+      </if>
+      <if test="meetingTime != null">
+        meeting_time,
+      </if>
+      <if test="meetingDuration != null">
+        meeting_duration,
+      </if>
+      <if test="meetingStatus != null">
+        meeting_status,
+      </if>
+      <if test="meetingLevel != null">
+        meeting_level,
+      </if>
+      <if test="releaseTime != null">
+        release_time,
+      </if>
+      <if test="meetingEditorId != null">
+        meeting_editor_id,
+      </if>
+      <if test="minutesMeetingId != null">
+        minutes_meeting_id,
+      </if>
+      <if test="mainContent != null">
+        main_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="hostParticipate != null">
+        #{hostParticipate,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingForm != null">
+        #{meetingForm,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingCategory != null">
+        #{meetingCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolOrCollege != null">
+        #{schoolOrCollege,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingTime != null">
+        #{meetingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingDuration != null">
+        #{meetingDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingStatus != null">
+        #{meetingStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingLevel != null">
+        #{meetingLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="releaseTime != null">
+        #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingEditorId != null">
+        #{meetingEditorId,jdbcType=VARCHAR},
+      </if>
+      <if test="minutesMeetingId != null">
+        #{minutesMeetingId,jdbcType=VARCHAR},
+      </if>
+      <if test="mainContent != null">
+        #{mainContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    update service_three_session_one_class
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="hostParticipate != null">
+        host_participate = #{hostParticipate,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingForm != null">
+        meeting_form = #{meetingForm,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingCategory != null">
+        meeting_category = #{meetingCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolOrCollege != null">
+        school_or_college = #{schoolOrCollege,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingTime != null">
+        meeting_time = #{meetingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingDuration != null">
+        meeting_duration = #{meetingDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingStatus != null">
+        meeting_status = #{meetingStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingLevel != null">
+        meeting_level = #{meetingLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="releaseTime != null">
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingEditorId != null">
+        meeting_editor_id = #{meetingEditorId,jdbcType=VARCHAR},
+      </if>
+      <if test="minutesMeetingId != null">
+        minutes_meeting_id = #{minutesMeetingId,jdbcType=VARCHAR},
+      </if>
+      <if test="mainContent != null">
+        main_content = #{mainContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    update service_three_session_one_class
+    set title = #{title,jdbcType=VARCHAR},
+      host_participate = #{hostParticipate,jdbcType=VARCHAR},
+      meeting_form = #{meetingForm,jdbcType=VARCHAR},
+      meeting_category = #{meetingCategory,jdbcType=VARCHAR},
+      school_or_college = #{schoolOrCollege,jdbcType=VARCHAR},
+      meeting_time = #{meetingTime,jdbcType=TIMESTAMP},
+      meeting_duration = #{meetingDuration,jdbcType=VARCHAR},
+      meeting_status = #{meetingStatus,jdbcType=VARCHAR},
+      meeting_level = #{meetingLevel,jdbcType=VARCHAR},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      meeting_editor_id = #{meetingEditorId,jdbcType=VARCHAR},
+      minutes_meeting_id = #{minutesMeetingId,jdbcType=VARCHAR},
+      main_content = #{mainContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cqut.building.entity.ServiceThreeSessionOneClass">
+    update service_three_session_one_class
+    set title = #{title,jdbcType=VARCHAR},
+      host_participate = #{hostParticipate,jdbcType=VARCHAR},
+      meeting_form = #{meetingForm,jdbcType=VARCHAR},
+      meeting_category = #{meetingCategory,jdbcType=VARCHAR},
+      school_or_college = #{schoolOrCollege,jdbcType=VARCHAR},
+      meeting_time = #{meetingTime,jdbcType=TIMESTAMP},
+      meeting_duration = #{meetingDuration,jdbcType=VARCHAR},
+      meeting_status = #{meetingStatus,jdbcType=VARCHAR},
+      meeting_level = #{meetingLevel,jdbcType=VARCHAR},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      meeting_editor_id = #{meetingEditorId,jdbcType=VARCHAR},
+      minutes_meeting_id = #{minutesMeetingId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--//根据三会一课id查询标题、会议时间、发表时间-->
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    title,meeting_time,release_time
+    from service_three_session_one_class
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateByPrimaryKeyMinutesMeetingId" parameterType="com.cqut.building.dto.MinutesMeetingIdDto">
+    update service_three_session_one_class
+    set minutes_meeting_id = #{minutesMeetingId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
